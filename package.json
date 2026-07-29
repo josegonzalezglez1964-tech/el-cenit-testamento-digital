@@ -10,8 +10,8 @@
     "test": "turbo run test",
     "type-check": "turbo run type-check",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "db:migrate": "prisma migrate dev",
-    "db:generate": "prisma generate",
+    "db:migrate": "turbo run db:migrate",
+    "db:generate": "turbo run db:generate",
     "db:seed": "tsx database/seeds/seed.ts",
     "docker:up": "docker-compose -f infrastructure/docker/docker-compose.yml up -d",
     "docker:down": "docker-compose -f infrastructure/docker/docker-compose.yml down"
@@ -27,9 +27,5 @@
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=8.0.0"
-    "pnpm": ">=8.0.0"
-,
-m@8.12.0",
--f inf"pa-f inf"pa-f inf"pervices/*"
-  ]
+  }
 }
