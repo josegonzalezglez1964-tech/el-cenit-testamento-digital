@@ -118,3 +118,108 @@ export default function RegistroPage() {
                 className={errors.fechaNacimiento ? 'border-red-500' : ''}
               />
               {errors.fechaNacimiento && (
+                <p className="text-sm text-red-500">{errors.fechaNacimiento.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="direccion">
+                <MapPin className="inline h-4 w-4 mr-1" />
+                Dirección
+              </Label>
+              <Input
+                id="direccion"
+                placeholder="Calle Mayor, 123, 38001 Santa Cruz de Tenerife"
+                {...register('direccion')}
+                className={errors.direccion ? 'border-red-500' : ''}
+              />
+              {errors.direccion && (
+                <p className="text-sm text-red-500">{errors.direccion.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="telefono">
+                <Phone className="inline h-4 w-4 mr-1" />
+                Teléfono
+              </Label>
+              <Input
+                id="telefono"
+                type="tel"
+                placeholder="612345678"
+                {...register('telefono')}
+                className={errors.telefono ? 'border-red-500' : ''}
+              />
+              {errors.telefono && (
+                <p className="text-sm text-red-500">{errors.telefono.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">
+                <Mail className="inline h-4 w-4 mr-1" />
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="juan@ejemplo.com"
+                {...register('email')}
+                className={errors.email ? 'border-red-500' : ''}
+              />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">
+                <Lock className="inline h-4 w-4 mr-1" />
+                Contraseña
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Mínimo 8 caracteres"
+                {...register('password')}
+                className={errors.password ? 'border-red-500' : ''}
+              />
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">
+                <Lock className="inline h-4 w-4 mr-1" />
+                Confirmar contraseña
+              </Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="Repita la contraseña"
+                {...register('confirmPassword')}
+                className={errors.confirmPassword ? 'border-red-500' : ''}
+              />
+              {errors.confirmPassword && (
+                <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+              )}
+            </div>
+          </div>
+
+          <Button type="submit" className="w-full mt-4" disabled={isLoading}>
+            <UserPlus className="mr-2 h-4 w-4" />
+            {isLoading ? 'Creando cuenta...' : 'Crear cuenta'}
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center text-sm text-gray-600">
+          ¿Ya tiene cuenta?{' '}
+          <Link href="/login" className="font-semibold text-cenit-600 hover:underline">
+            Inicie sesión
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
