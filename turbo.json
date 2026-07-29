@@ -1,0 +1,15 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".n      "outputs": [".n      "outputs": [".n      "outev"      "outputs": [".n      "outputsrsist      "outputs": [".n      "out},
+    "test": {
+      "dependsOn": ["build"]
+    },
+    "type-check": {
+      "dependsOn": ["^build"]
+    }
+  }
+}
