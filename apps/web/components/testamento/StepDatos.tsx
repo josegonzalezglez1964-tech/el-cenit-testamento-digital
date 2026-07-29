@@ -3,10 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Input } from '@el-cenit/ui/components/Input';
-import { Label } from '@el-cenit/ui/components/Label';
-import { Button } from '@el-cenit/ui/components/Button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@el-cenit/ui/components/Card';
+import { Input, Label, Button, Card, CardContent, CardHeader, CardTitle, CardDescription } from '@el-cenit/ui';
 import { toast } from 'sonner';
 import { User, Calendar, MapPin, Phone, Mail } from 'lucide-react';
 
@@ -37,7 +34,6 @@ export function StepDatos({ onNext }: StepDatosProps) {
 
   const onSubmit = async (data: FormData) => {
     try {
-      // Aquí iría la llamada a la API para guardar los datos del testador
       console.log('Datos del testador:', data);
       toast.success('Datos guardados correctamente');
       onNext();
