@@ -5,10 +5,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Input } from '@el-cenit/ui/components/Input';
-import { Label } from '@el-cenit/ui/components/Label';
-import { Button } from '@el-cenit/ui/components/Button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@el-cenit/ui/components/Card';
+import { Input, Label, Button, Card, CardContent, CardHeader, CardTitle, CardDescription } from '@el-cenit/ui';
 import { toast } from 'sonner';
 import { Mail, Lock, LogIn } from 'lucide-react';
 
@@ -32,10 +29,8 @@ export default function LoginPage() {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      // Aquí iría la llamada a next-auth
       console.log('Login:', data);
       toast.success('Inicio de sesión exitoso');
-      // router.push('/testamento/nuevo');
     } catch (error) {
       toast.error('Error al iniciar sesión');
     } finally {
