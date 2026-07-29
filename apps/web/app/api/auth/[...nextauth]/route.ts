@@ -1,16 +1,10 @@
 import NextAuth from 'next-auth';
-import { PrismaAdapter } from '@auth/prisma-adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaClient } from '@prisma/client';
-import { compare } from 'bcryptjs';
-
-const prisma = new PrismaClient();
 
 const handler = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 días
+    maxAge: 30 * 24 * 60 * 60,
   },
   pages: {
     signIn: '/login',
@@ -28,26 +22,17 @@ const handler = NextAuth({
           return null;
         }
 
-        const user = await prisma.usuario.findUnique({
-          where: { email: credentials.email },
-        });
-
-        if (!user || !user.password) {
-          return null;
+        // Mock de autenticación (sin Prisma por ahora)
+        if (credentials.email === 'test@cenit.es' && credentials.password === 'password123') {
+          return {
+            id: '1',
+            email: credentials.email,
+            name: 'Usuario Test',
+            role: 'TESTADOR',
+          };
         }
 
-        const isValid = await compare(credentials.password, user.password);
-
-        if (!isValid) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: `${user.nombre} ${user.apellidos}`,
-          role: user.rol,
-        };
+        return null;
       },
     }),
   ],
