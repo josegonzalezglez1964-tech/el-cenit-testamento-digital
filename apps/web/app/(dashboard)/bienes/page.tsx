@@ -128,4 +128,57 @@ export default function BienesPage() {
             </div>
           </div>
           <div className="flex justify-end">
-            <Button onClick={handleAdd}>Añadir bien</Button
+            <Button onClick={handleAdd}>Añadir bien</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-3">
+        {bienes.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-gray-500">
+            <Package className="mx-auto h-10 w-10 text-gray-300" />
+            <p className="mt-2">No hay bienes registrados</p>
+          </div>
+        ) : (
+          <>
+            {bienes.map((b) => (
+              <div
+                key={b.id}
+                className="flex items-center justify-between rounded-lg border bg-white p-4 shadow-sm"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-canarias-100 text-canarias-700">
+                    <Package className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">{b.descripcion}</p>
+                    <p className="text-sm text-gray-500">{b.ubicacion}</p>
+                  </div>
+                  <Badge variant="outline">{b.tipo.replace('_', ' ')}</Badge>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="flex items-center gap-1 text-sm font-medium text-gray-700">
+                    <Euro className="h-4 w-4" />
+                    {b.valor.toLocaleString('es-ES')} {b.moneda}
+                  </span>
+                  <button
+                    onClick={() => handleRemove(b.id)}
+                    className="rounded-md p-2 text-gray-400 hover:bg-red-50 hover:text-red-600"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <div className="rounded-lg bg-cenit-50 p-4 text-right">
+              <span className="text-sm text-gray-600">Valor total del patrimonio: </span>
+              <span className="text-lg font-bold text-cenit-800">
+                {valorTotal.toLocaleString('es-ES')} EUR
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
