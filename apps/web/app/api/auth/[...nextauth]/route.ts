@@ -22,12 +22,40 @@ const handler = NextAuth({
           return null;
         }
 
-        // Mock de autenticación (sin Prisma por ahora)
-        if (credentials.email === 'test@cenit.es' && credentials.password === 'password123') {
+        // ============================================
+        // MODO DESARROLLO: acepta cualquier email/password válidos
+        // En producción esto se reemplaza por validación real con Prisma/DB
+        // ============================================
+        const email = credentials.email.trim().toLowerCase();
+        const password = credentials.password;
+
+        // Usuario de demo (siempre funciona)
+        if (email === 'test@cenit.es' && password === 'password123') {
           return {
             id: '1',
-            email: credentials.email,
-            name: 'Usuario Test',
+            email: 'test@cenit.es',
+            name: 'Usuario Demo',
+            role: 'TESTADOR',
+          };
+        }
+
+        // Tu usuario personal (añadido para desarrollo)
+        if (email === 'josegonzalezglez1964@gmail.com') {
+          return {
+            id: '2',
+            email: 'josegonzalezglez1964@gmail.com',
+            name: 'José González',
+            role: 'TESTADOR',
+          };
+        }
+
+        // Cualquier otro email con contraseña de al menos 6 caracteres
+        // (solo para desarrollo local — quitar en producción)
+        if (password.length >= 6) {
+          return {
+            id: crypto.randomUUID(),
+            email: email,
+            name: email.split('@')[0],
             role: 'TESTADOR',
           };
         }
