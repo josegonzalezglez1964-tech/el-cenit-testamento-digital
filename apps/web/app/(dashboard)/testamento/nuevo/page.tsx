@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { StepDatos } from '@/components/testamento/StepDatos';
 import { StepHerederos } from '@/components/testamento/StepHerederos';
+import { StepBienes } from '@/components/testamento/StepBienes';
 
 const steps = [
   { id: 1, label: 'Datos personales', icon: User },
@@ -101,19 +102,35 @@ export default function NuevoTestamentoPage() {
             />
           )}
           {currentStep === 3 && (
-            <div className="text-center py-12">
-              <h3 className="text-xl font-semibold text-gray-700">
-                Paso 3: Bienes
-              </h3>
-              <p className="text-gray-500 mt-2">Próximamente...</p>
-            </div>
+            <StepBienes
+              onNext={() => setCurrentStep(4)}
+              onBack={() => setCurrentStep(2)}
+            />
           )}
           {currentStep === 4 && (
-            <div className="text-center py-12">
+            <div className="text-center py-12 space-y-4">
+              <FileSignature className="mx-auto h-16 w-16 text-gray-300" />
               <h3 className="text-xl font-semibold text-gray-700">
-                Paso 4: Disposiciones
+                Paso 4: Disposiciones especiales
               </h3>
-              <p className="text-gray-500 mt-2">Próximamente...</p>
+              <p className="text-gray-500 max-w-md mx-auto">
+                Designación de albacea, testamento vital, tutela de menores y legado solidario.
+              </p>
+              <p className="text-sm text-gray-400">Próximamente en el Bloque 17...</p>
+              <div className="flex justify-between pt-8 max-w-md mx-auto">
+                <button
+                  onClick={() => setCurrentStep(3)}
+                  className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  ← Anterior
+                </button>
+                <button
+                  onClick={() => setCurrentStep(5)}
+                  className="inline-flex items-center rounded-md bg-canarias-600 px-4 py-2 text-sm font-medium text-white hover:bg-canarias-700"
+                >
+                  Continuar →
+                </button>
+              </div>
             </div>
           )}
           {currentStep === 5 && (
@@ -126,6 +143,14 @@ export default function NuevoTestamentoPage() {
                 Su testamento ha sido registrado correctamente. Puede descargar el
                 documento o revisarlo en cualquier momento desde su panel.
               </p>
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={() => setCurrentStep(4)}
+                  className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  ← Anterior
+                </button>
+              </div>
             </div>
           )}
         </motion.div>
