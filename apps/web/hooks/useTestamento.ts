@@ -1,6 +1,7 @@
+'use client';
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { immer } from 'zustand/middleware/immer';
 
 export interface Heredero {
   id: string;
@@ -64,92 +65,107 @@ interface TestamentoState {
 }
 
 export const useTestamentoStore = create<TestamentoState>()(
-  immer(
-    persist(
-      (set, get) => ({
-        testamento: {
-          pasoActual: 1,
-          herederos: [],
-          bienes: [],
-          disposiciones: {
-            testamentoVital: false,
+  persist(
+    (set, get) => ({
+      testamento: {
+        pasoActual: 1,
+        herederos: [],
+        bienes: [],
+        disposiciones: {
+          testamentoVital: false,
+        },
+        estado: 'borrador',
+      },
+
+      setPaso: (paso) => {
+        set((state) => ({
+          testamento: { ...state.testamento, pasoActual: paso },
+        }));
+      },
+
+      setDatosIdentidad: (datos) => {
+        set((state) => ({
+          testamento: { ...state.testamento, datosIdentidad: datos },
+        }));
+      },
+
+      addHeredero: (heredero) => {
+        set((state) => ({
+          testamento: {
+            ...state.testamento,
+            herederos: [...state.testamento.herederos, heredero],
           },
-          estado: 'borrador',
-        },
+        }));
+      },
 
-        setPaso: (paso) => {
-          set((state) => {
-            state.testamento.pasoActual = paso;
-          });
-        },
+      removeHeredero: (id) => {
+        set((state) => ({
+          testamento: {
+            ...state.testamento,
+            herederos: state.testamento.herederos.filter((h) => h.id !== id),
+          },
+        }));
+      },
 
-        setDatosIdentidad: (datos) => {
-          set((state) => {
-            state.testamento.datosIdentidad = datos;
-          });
-        },
+      addBien: (bien) => {
+        set((state) => ({
+          testamento: {
+            ...state.testamento,
+            bienes: [...state.testamento.bienes, bien],
+          },
+        }));
+      },
 
-        addHeredero: (heredero) => {
-          set((state) => {
-            state.testamento.herederos.push(heredero);
-          });
-        },
+      removeBien: (id) => {
+        set((state) => ({
+          testamento: {
+            ...state.testamento,
+            bienes: state.testamento.bienes.filter((b) => b.id !== id),
+          },
+        }));
+      },
 
-        removeHeredero: (id) => {
-          set((state) => {
-            state.testamento.herederos = state.testamento.herederos.filter(h => h.id !== id);
-          });
-        },
+      setDisposiciones: (disp) => {
+        set((state) => ({
+          testamento: {
+            ...state.testamento,
+            disposiciones: { ...state.testamento.disposiciones, ...disp },
+          },
+        }));
+      },
 
-        addBien: (bien) => {
-          set((state) => {
-            state.testamento.bienes.push(bien);
-          });
-        },
+      validarPaso: async (paso) => {
+        const { testamento } = get();
+        switch (paso) {
+          case 1:
+            return !!testamento.datosIdentidad?.nombre && !!testamento.datosIdentidad?.dni;
+          case 2:
+            return (
+              testamento.herederos.length > 0 &&
+              testamento.herederos.reduce((sum, h) => sum + h.porcentaje, 0) <= 100
+            );
+          case 3:
+            return testamento.bienes.length > 0;
+          case 4:
+            return true;
+          default:
+            return true;
+        }
+      },
 
-        removeBien: (id) => {
-          set((state) => {
-            state.testamento.bienes = state.testamento.bienes.filter(b => b.id !== id);
-          });
-        },
+      guardarBorrador: async () => {
+        console.log('Borrador guardado');
+      },
 
-        setDisposiciones: (disp) => {
-          set((state) => {
-            state.testamento.disposiciones = { ...state.testamento.disposiciones, ...disp };
-          });
-        },
-
-        validarPaso: async (paso) => {
-          const { testamento } = get();
-          switch (paso) {
-            case 1:
-              return !!testamento.datosIdentidad?.nombre && !!testamento.datosIdentidad?.dni;
-            case 2:
-              return testamento.herederos.length > 0 &&
-                     testamento.herederos.reduce((sum, h) => sum + h.porcentaje, 0) <= 100;
-            case 3:
-              return testamento.bienes.length > 0;
-            case 4:
-              return true;
-            default:
-              return true;
-          }
-        },
-
-        guardarBorrador: async () => {
-          console.log('Borrador guardado');
-        },
-
-        firmarTestamento: async () => {
-          set((state) => {
-            state.testamento.estado = 'firmado';
-          });
-        },
-      }),
-      {
-        name: 'el-cenit-testamento-storage',
-        partialize: (state) => ({ testamento: state.testamento }),
-      }
-    )
+      firmarTestamento: async () => {
+        set((state) => ({
+          testamento: { ...state.testamento, estado: 'firmado' },
+        }));
+      },
+    }),
+    {
+      name: 'el-cenit-testamento-storage',
+      partialize: (state) => ({ testamento: state.testamento }),
+    }
   )
 );
