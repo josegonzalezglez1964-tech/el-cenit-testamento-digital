@@ -8,7 +8,6 @@ import {
   Package,
   FileSignature,
   CheckCircle,
-  ChevronRight,
 } from 'lucide-react';
 import { StepDatos } from '@/components/testamento/StepDatos';
 import { StepHerederos } from '@/components/testamento/StepHerederos';
