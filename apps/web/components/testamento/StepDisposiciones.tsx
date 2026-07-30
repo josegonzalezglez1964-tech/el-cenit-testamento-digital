@@ -1,14 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import {
-  Input,
-  Label,
-  Button,
-  Badge,
-} from '@el-cenit/ui';
+import { Input, Label, Button } from '@el-cenit/ui';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@el-cenit/ui';
 import { toast } from 'sonner';
 import {
@@ -24,13 +20,13 @@ import {
 import { useTestamentoStore } from '@/hooks/useTestamento';
 
 const schema = z.object({
-  albaceaNombre: z.string().min(2, 'El nombre del albacea es obligatorio').optional().or(z.literal('')),
-  albaceaDni: z.string().regex(/^[0-9]{8}[A-Z]$|^[XYZ][0-9]{7}[A-Z]$/, 'DNI/NIE no válido').optional().or(z.literal('')),
-  testamentoVital: z.boolean(),
+  albaceaNombre: z.string().optional(),
+  albaceaDni: z.string().optional(),
+  testamentoVital: z.boolean().default(false),
   tutelaMenores: z.string().optional(),
-  legadoSolidario: z.boolean(),
+  legadoSolidario: z.boolean().default(false),
   ongNombre: z.string().optional(),
-  ongPorcentaje: z.coerce.number().min(1).max(100).optional(),
+  ongPorcentaje: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -44,6 +40,9 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
   const { testamento, setDisposiciones } = useTestamentoStore();
   const disp = testamento.disposiciones || {};
 
+  const [tvChecked, setTvChecked] = useState(disp.testamentoVital || false);
+  const [lsChecked, setLsChecked] = useState(!!disp.legadoSolidario?.ong);
+
   const {
     register,
     handleSubmit,
@@ -56,29 +55,30 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
       albaceaDni: disp.albacea?.match(/\(([^)]+)\)/)?.[1] || '',
       testamentoVital: disp.testamentoVital || false,
       tutelaMenores: disp.tutelaMenores || '',
-      legadoSolidario: !!disp.legadoSolidario?.ong || false,
+      legadoSolidario: !!disp.legadoSolidario?.ong,
       ongNombre: disp.legadoSolidario?.ong || '',
-      ongPorcentaje: disp.legadoSolidario?.porcentaje || undefined,
+      ongPorcentaje: disp.legadoSolidario?.porcentaje?.toString() || '',
     },
   });
 
-  const testamentoVital = watch('testamentoVital');
-  const legadoSolidario = watch('legadoSolidario');
+  const albaceaNombre = watch('albaceaNombre');
+  const tutelaMenores = watch('tutelaMenores');
+  const ongNombre = watch('ongNombre');
+  const ongPorcentaje = watch('ongPorcentaje');
 
   const onSubmit = (data: FormData) => {
-    const albacea = data.albaceaNombre
-      ? `${data.albaceaNombre}${data.albaceaDni ? ` (${data.albaceaDni})` : ''}`
+    const albacea = data.albaceaNombre?.trim()
+      ? `${data.albaceaNombre.trim()}${data.albaceaDni?.trim() ? ` (${data.albaceaDni.trim()})` : ''}`
       : undefined;
+
+    const ongPct = data.ongPorcentaje ? parseFloat(data.ongPorcentaje) : 0;
 
     setDisposiciones({
       albacea,
-      testamentoVital: data.testamentoVital,
-      tutelaMenores: data.tutelaMenores || undefined,
-      legadoSolidario: data.legadoSolidario && data.ongNombre
-        ? {
-            ong: data.ongNombre,
-            porcentaje: data.ongPorcentaje || 0,
-          }
+      testamentoVital: tvChecked,
+      tutelaMenores: data.tutelaMenores?.trim() || undefined,
+      legadoSolidario: lsChecked && data.ongNombre?.trim()
+        ? { ong: data.ongNombre.trim(), porcentaje: ongPct }
         : undefined,
     });
 
@@ -144,67 +144,22 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4">
-            <label className="flex items-center gap-3 cursor-pointer rounded-lg border p-4 hover:bg-gray-50 transition-colors flex-1">
-              <input
-                type="radio"
-                value="false"
-                checked={!testamentoVital}
-                onChange={() => {}}
-                onClick={() => {
-                  const el = document.getElementById('tv-no') as HTMLInputElement;
-                  if (el) el.click();
-                }}
-                className="sr-only"
-              />
-              <input
-                id="tv-no"
-                type="radio"
-                {...register('testamentoVital')}
-                value="false"
-                checked={!testamentoVital}
-                onChange={() => {}}
-                className="h-4 w-4"
-              />
-              <div>
-                <p className="font-medium text-gray-900">No incluir</p>
-                <p className="text-sm text-gray-500">
-                  No deseo incluir testamento vital en este documento
-                </p>
-              </div>
-            </label>
+          <label className="flex items-center gap-3 cursor-pointer rounded-lg border p-4 hover:bg-gray-50 transition-colors">
+            <input
+              type="checkbox"
+              checked={tvChecked}
+              onChange={(e) => setTvChecked(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300"
+            />
+            <div>
+              <p className="font-medium text-gray-900">Incluir testamento vital</p>
+              <p className="text-sm text-gray-500">
+                Deseo que se registre mi testamento vital junto al testamento ante la Consejería de Sanidad
+              </p>
+            </div>
+          </label>
 
-            <label className="flex items-center gap-3 cursor-pointer rounded-lg border p-4 hover:bg-gray-50 transition-colors flex-1">
-              <input
-                type="radio"
-                value="true"
-                checked={testamentoVital}
-                onChange={() => {}}
-                onClick={() => {
-                  const el = document.getElementById('tv-si') as HTMLInputElement;
-                  if (el) el.click();
-                }}
-                className="sr-only"
-              />
-              <input
-                id="tv-si"
-                type="radio"
-                {...register('testamentoVital')}
-                value="true"
-                checked={testamentoVital}
-                onChange={() => {}}
-                className="h-4 w-4"
-              />
-              <div>
-                <p className="font-medium text-gray-900">Sí, incluir</p>
-                <p className="text-sm text-gray-500">
-                  Deseo que se registre mi testamento vital junto al testamento
-                </p>
-              </div>
-            </label>
-          </div>
-
-          {testamentoVital && (
+          {tvChecked && (
             <div className="mt-4 rounded-lg bg-amber-50 border border-amber-200 p-4">
               <p className="text-sm text-amber-800">
                 <Info className="inline h-4 w-4 mr-1" />
@@ -257,9 +212,9 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
         <CardContent className="space-y-4">
           <label className="flex items-center gap-3 cursor-pointer">
             <input
-              id="legado-solidario"
               type="checkbox"
-              {...register('legadoSolidario')}
+              checked={lsChecked}
+              onChange={(e) => setLsChecked(e.target.checked)}
               className="h-4 w-4 rounded border-gray-300"
             />
             <span className="text-sm text-gray-700">
@@ -267,7 +222,7 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
             </span>
           </label>
 
-          {legadoSolidario && (
+          {lsChecked && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 rounded-lg bg-gray-50 p-4">
               <div className="space-y-2">
                 <Label htmlFor="ongNombre">Nombre de la ONG</Label>
@@ -304,31 +259,33 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            {watch('albaceaNombre') ? (
-              <Badge variant="default" className="bg-canarias-600">
+            {albaceaNombre?.trim() ? (
+              <span className="inline-flex items-center rounded-full bg-canarias-100 px-3 py-1 text-xs font-medium text-canarias-700">
                 <UserCheck className="h-3 w-3 mr-1" />
-                Albacea: {watch('albaceaNombre')}
-              </Badge>
+                Albacea: {albaceaNombre}
+              </span>
             ) : (
-              <Badge variant="outline">Sin albacea designado</Badge>
+              <span className="inline-flex items-center rounded-full border border-gray-200 px-3 py-1 text-xs text-gray-500">
+                Sin albacea designado
+              </span>
             )}
-            {testamentoVital && (
-              <Badge variant="default" className="bg-red-500">
+            {tvChecked && (
+              <span className="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
                 <HeartPulse className="h-3 w-3 mr-1" />
                 Testamento vital
-              </Badge>
+              </span>
             )}
-            {watch('tutelaMenores') && (
-              <Badge variant="default" className="bg-blue-500">
+            {tutelaMenores?.trim() && (
+              <span className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
                 <Baby className="h-3 w-3 mr-1" />
                 Tutela menores
-              </Badge>
+              </span>
             )}
-            {legadoSolidario && watch('ongNombre') && (
-              <Badge variant="default" className="bg-green-600">
+            {lsChecked && ongNombre?.trim() && (
+              <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
                 <HandHeart className="h-3 w-3 mr-1" />
-                Legado: {watch('ongNombre')} ({watch('ongPorcentaje') || 0}%)
-              </Badge>
+                Legado: {ongNombre} ({ongPorcentaje || 0}%)
+              </span>
             )}
           </div>
         </CardContent>
