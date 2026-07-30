@@ -1772,3 +1772,10 @@
 2026-07-30T20:14:07.790390Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
 2026-07-30T20:14:08.491335Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
 2026-07-30T20:14:08.491351Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-30T20:14:14.090451Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("apps/web/.next"), AnchoredSystemPathBuf("apps"), AnchoredSystemPathBuf("apps/web")}
+2026-07-30T20:14:14.090469Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-30T20:14:14.280035Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-07-30T20:14:14.490596Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-30T20:14:14.490613Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-30T20:14:18.090278Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-30T20:14:18.090316Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
