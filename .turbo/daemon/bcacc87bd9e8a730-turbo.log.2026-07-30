@@ -1062,3 +1062,21 @@
 2026-07-30T12:00:24.209373Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
 2026-07-30T12:00:24.354132Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
 2026-07-30T12:00:24.354155Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-30T12:00:58.153529Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-30T12:00:58.153545Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-30T12:00:58.654149Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-30T12:00:58.654165Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-30T12:01:01.953473Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-30T12:01:01.953496Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-30T12:03:02.051992Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo"), AnchoredSystemPathBuf("packages"), AnchoredSystemPathBuf("node_modules")}
+2026-07-30T12:03:02.052012Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/blockchain"), path: AnchoredSystemPathBuf("packages/blockchain") }, WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-07-30T12:03:02.052061Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-07-30T12:03:02.152420Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps")}
+2026-07-30T12:03:02.152438Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-30T12:03:02.152479Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-07-30T12:03:08.350828Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("  /*,\n    services")}
+2026-07-30T12:03:08.350845Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-07-30T12:03:09.351437Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("  /*,\n    services/*\n  ]\n}\nROOT_PACKAGE\n\ncat > pnpm-workspace.yaml << 'WORKSPACE'\npackages:\n  - apps")}
+2026-07-30T12:03:09.351455Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-07-30T12:03:10.350633Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("  /*,\n    services/*\n  ]\n}\nROOT_PACKAGE\n\ncat > pnpm-workspace.yaml << 'WORKSPACE'\npackages:\n  - apps/*\n  - packag")}
+2026-07-30T12:03:10.350653Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
