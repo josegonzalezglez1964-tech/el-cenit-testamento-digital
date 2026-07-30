@@ -1,11 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Input, Label, Button, Card, CardContent, CardHeader, CardTitle, CardDescription } from '@el-cenit/ui';
+import { Input, Label, Button } from '@el-cenit/ui';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@el-cenit/ui';
 import { toast } from 'sonner';
 import { Mail, Lock, LogIn } from 'lucide-react';
 
@@ -18,6 +21,9 @@ type FormData = z.infer<typeof schema>;
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/testamento/nuevo';
+
   const {
     register,
     handleSubmit,
@@ -29,8 +35,19 @@ export default function LoginPage() {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      console.log('Login:', data);
-      toast.success('Inicio de sesión exitoso');
+      const result = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+        callbackUrl,
+      });
+
+      if (result?.error) {
+        toast.error('Email o contraseña incorrectos');
+      } else {
+        toast.success('Inicio de sesión exitoso');
+        window.location.href = callbackUrl;
+      }
     } catch (error) {
       toast.error('Error al iniciar sesión');
     } finally {
@@ -73,7 +90,7 @@ export default function LoginPage() {
               </Label>
               <Link
                 href="/recuperar-password"
-                className="text-xs text-cenit-600 hover:underline"
+                className="text-xs text-canarias-600 hover:underline"
               >
                 ¿Olvidó su contraseña?
               </Link>
@@ -98,7 +115,7 @@ export default function LoginPage() {
 
         <div className="mt-6 text-center text-sm text-gray-600">
           ¿No tiene cuenta?{' '}
-          <Link href="/registro" className="font-semibold text-cenit-600 hover:underline">
+          <Link href="/registro" className="font-semibold text-canarias-600 hover:underline">
             Regístrese aquí
           </Link>
         </div>
