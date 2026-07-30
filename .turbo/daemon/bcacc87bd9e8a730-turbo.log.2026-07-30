@@ -1106,3 +1106,11 @@
 2026-07-30T12:05:07.278779Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
 2026-07-30T12:05:56.975430Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("  "), AnchoredSystemPathBuf("  /*,\n    services"), AnchoredSystemPathBuf("  /*,\n    services/*\n  ]\n}\nROOT_PACKAGE\n\ncat > pnpm-workspace.yaml << 'WORKSPACE'\npackages:\n  - apps")}
 2026-07-30T12:05:56.975448Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-07-30T12:06:08.175705Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-30T12:06:08.175723Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-30T12:06:08.375794Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-30T12:06:08.375818Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-30T12:06:11.275918Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-30T12:06:11.275934Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-30T12:06:11.375232Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-30T12:06:11.375247Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
