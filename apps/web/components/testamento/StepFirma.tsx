@@ -2,11 +2,7 @@
 
 import { useState } from "react";
 import { useTestamentoStore } from "@/hooks/useTestamento";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import { Button, Label, Card, CardContent, Checkbox, Textarea } from "@el-cenit/ui";
 import {
   FileCheck,
   Shield,
@@ -157,8 +153,8 @@ export function StepFirma() {
               <Checkbox
                 id="voluntad"
                 checked={aceptaciones.voluntad}
-                onCheckedChange={(checked) =>
-                  setAceptaciones({ ...aceptaciones, voluntad: checked as boolean })
+                onChange={(e) =>
+                  setAceptaciones({ ...aceptaciones, voluntad: (e.target as HTMLInputElement).checked })
                 }
               />
               <div className="space-y-1">
@@ -175,8 +171,8 @@ export function StepFirma() {
               <Checkbox
                 id="capacidad"
                 checked={aceptaciones.capacidad}
-                onCheckedChange={(checked) =>
-                  setAceptaciones({ ...aceptaciones, capacidad: checked as boolean })
+                onChange={(e) =>
+                  setAceptaciones({ ...aceptaciones, capacidad: (e.target as HTMLInputElement).checked })
                 }
               />
               <div className="space-y-1">
@@ -194,8 +190,8 @@ export function StepFirma() {
               <Checkbox
                 id="veracidad"
                 checked={aceptaciones.veracidad}
-                onCheckedChange={(checked) =>
-                  setAceptaciones({ ...aceptaciones, veracidad: checked as boolean })
+                onChange={(e) =>
+                  setAceptaciones({ ...aceptaciones, veracidad: (e.target as HTMLInputElement).checked })
                 }
               />
               <div className="space-y-1">
@@ -213,8 +209,8 @@ export function StepFirma() {
               <Checkbox
                 id="revocacion"
                 checked={aceptaciones.revocacion}
-                onCheckedChange={(checked) =>
-                  setAceptaciones({ ...aceptaciones, revocacion: checked as boolean })
+                onChange={(e) =>
+                  setAceptaciones({ ...aceptaciones, revocacion: (e.target as HTMLInputElement).checked })
                 }
               />
               <div className="space-y-1">
@@ -254,7 +250,7 @@ export function StepFirma() {
                     <p className="text-sm text-slate-500">DNI: {t.dni}</p>
                   </div>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
                     onClick={() => eliminarTestigo(t.id)}
                     className="text-red-500 hover:text-red-700"
