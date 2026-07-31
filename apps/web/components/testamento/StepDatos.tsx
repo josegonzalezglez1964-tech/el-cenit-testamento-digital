@@ -3,8 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Input, Label, Button } from '@el-cenit/ui';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@el-cenit/ui';
+import { Input, Label, Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@el-cenit/ui';
 import { toast } from 'sonner';
 import { User, Calendar, MapPin, Phone, Mail } from 'lucide-react';
 
