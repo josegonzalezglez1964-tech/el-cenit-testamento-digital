@@ -1,11 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@el-cenit/ui/components/Card';
-import { Button } from '@el-cenit/ui/components/Button';
-import { Input } from '@el-cenit/ui/components/Input';
-import { Label } from '@el-cenit/ui/components/Label';
-import { Badge } from '@el-cenit/ui/components/Badge';
+import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label, Badge } from '@el-cenit/ui';
 import { toast } from 'sonner';
 import { Package, Plus, Trash2, Euro } from 'lucide-react';
 
