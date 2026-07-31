@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Input, Label, Button, Badge } from '@el-cenit/ui';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@el-cenit/ui';
+import { Input, Label, Button, Badge, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@el-cenit/ui';
 import { toast } from 'sonner';
 import {
   Users,
