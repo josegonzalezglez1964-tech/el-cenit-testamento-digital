@@ -1,11 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@el-cenit/ui/components/Card';
-import { Button } from '@el-cenit/ui/components/Button';
-import { Input } from '@el-cenit/ui/components/Input';
-import { Label } from '@el-cenit/ui/components/Label';
-import { Badge } from '@el-cenit/ui/components/Badge';
+import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label, Badge } from '@el-cenit/ui';
 import { toast } from 'sonner';
 import { Users, Plus, Trash2, Percent } from 'lucide-react';
 
@@ -127,4 +123,36 @@ export default function HerederosPage() {
           herederos.map((h) => (
             <div
               key={h.id}
-              className="flex
+              className="flex items-center justify-between rounded-lg border bg-white p-4 shadow-sm"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-canarias-100 text-canarias-700">
+                  <Users className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900">
+                    {h.nombre} {h.apellidos}
+                  </p>
+                  <p className="text-sm text-gray-500">DNI: {h.dni}</p>
+                </div>
+                <Badge variant="outline">{h.tipo.replace('_', ' ')}</Badge>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="flex items-center gap-1 text-sm font-medium text-gray-700">
+                  <Percent className="h-4 w-4" />
+                  {h.porcentaje}%
+                </span>
+                <button
+                  onClick={() => handleRemove(h.id)}
+                  className="rounded-md p-2 text-gray-400 hover:bg-red-50 hover:text-red-600"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
