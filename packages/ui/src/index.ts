@@ -5,3 +5,5 @@ export { Input } from './components/Input';
 export { Label } from './components/Label';
 export { Badge } from './components/Badge';
 export { cn } from './lib/utils';
+export { Checkbox } from './components/Checkbox';
+export { Textarea } from './components/Textarea';
