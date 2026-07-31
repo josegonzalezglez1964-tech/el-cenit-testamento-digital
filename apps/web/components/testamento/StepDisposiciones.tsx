@@ -1,11 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Input, Label, Button } from '@el-cenit/ui';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@el-cenit/ui';
+import { Button } from '@el-cenit/ui';
 import { toast } from 'sonner';
 import {
   FileSignature,
@@ -19,18 +15,6 @@ import {
 } from 'lucide-react';
 import { useTestamentoStore } from '@/hooks/useTestamento';
 
-const schema = z.object({
-  albaceaNombre: z.string().optional(),
-  albaceaDni: z.string().optional(),
-  testamentoVital: z.boolean().default(false),
-  tutelaMenores: z.string().optional(),
-  legadoSolidario: z.boolean().default(false),
-  ongNombre: z.string().optional(),
-  ongPorcentaje: z.string().optional(),
-});
-
-type FormData = z.infer<typeof schema>;
-
 interface StepDisposicionesProps {
   onNext: () => void;
   onBack: () => void;
@@ -40,45 +24,27 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
   const { testamento, setDisposiciones } = useTestamentoStore();
   const disp = testamento.disposiciones || {};
 
+  const [albaceaNombre, setAlbaceaNombre] = useState(disp.albacea?.split(' (')[0] || '');
+  const [albaceaDni, setAlbaceaDni] = useState(disp.albacea?.match(/\(([^)]+)\)/)?.[1] || '');
   const [tvChecked, setTvChecked] = useState(disp.testamentoVital || false);
+  const [tutela, setTutela] = useState(disp.tutelaMenores || '');
   const [lsChecked, setLsChecked] = useState(!!disp.legadoSolidario?.ong);
+  const [ongNombre, setOngNombre] = useState(disp.legadoSolidario?.ong || '');
+  const [ongPct, setOngPct] = useState(disp.legadoSolidario?.porcentaje?.toString() || '');
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      albaceaNombre: disp.albacea?.split(' (')[0] || '',
-      albaceaDni: disp.albacea?.match(/\(([^)]+)\)/)?.[1] || '',
-      testamentoVital: disp.testamentoVital || false,
-      tutelaMenores: disp.tutelaMenores || '',
-      legadoSolidario: !!disp.legadoSolidario?.ong,
-      ongNombre: disp.legadoSolidario?.ong || '',
-      ongPorcentaje: disp.legadoSolidario?.porcentaje?.toString() || '',
-    },
-  });
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const albaceaNombre = watch('albaceaNombre');
-  const tutelaMenores = watch('tutelaMenores');
-  const ongNombre = watch('ongNombre');
-  const ongPorcentaje = watch('ongPorcentaje');
-
-  const onSubmit = (data: FormData) => {
-    const albacea = data.albaceaNombre?.trim()
-      ? `${data.albaceaNombre.trim()}${data.albaceaDni?.trim() ? ` (${data.albaceaDni.trim()})` : ''}`
+    const albacea = albaceaNombre.trim()
+      ? `${albaceaNombre.trim()}${albaceaDni.trim() ? ` (${albaceaDni.trim()})` : ''}`
       : undefined;
-
-    const ongPct = data.ongPorcentaje ? parseFloat(data.ongPorcentaje) : 0;
 
     setDisposiciones({
       albacea,
       testamentoVital: tvChecked,
-      tutelaMenores: data.tutelaMenores?.trim() || undefined,
-      legadoSolidario: lsChecked && data.ongNombre?.trim()
-        ? { ong: data.ongNombre.trim(), porcentaje: ongPct }
+      tutelaMenores: tutela.trim() || undefined,
+      legadoSolidario: lsChecked && ongNombre.trim()
+        ? { ong: ongNombre.trim(), porcentaje: parseFloat(ongPct) || 0 }
         : undefined,
     });
 
@@ -87,63 +53,60 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {/* Albacea */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <UserCheck className="h-5 w-5" />
+      <div className="rounded-lg border bg-white shadow-sm">
+        <div className="p-6 border-b">
+          <h3 className="flex items-center gap-2 text-lg font-semibold">
+            <UserCheck className="h-5 w-5 text-canarias-600" />
             Designación de albacea
-          </CardTitle>
-          <CardDescription>
-            Persona encargada de ejecutar y cumplir las disposiciones de su testamento
-            tras su fallecimiento.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+          </h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Persona encargada de ejecutar y cumplir las disposiciones de su testamento.
+          </p>
+        </div>
+        <div className="p-6 space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="albaceaNombre">Nombre completo del albacea</Label>
-              <Input
-                id="albaceaNombre"
+              <label className="text-sm font-medium">Nombre completo del albacea</label>
+              <input
+                type="text"
+                value={albaceaNombre}
+                onChange={(e) => setAlbaceaNombre(e.target.value)}
                 placeholder="María García López"
-                {...register('albaceaNombre')}
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-canarias-500"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="albaceaDni">DNI / NIE del albacea</Label>
-              <Input
-                id="albaceaDni"
+              <label className="text-sm font-medium">DNI / NIE del albacea</label>
+              <input
+                type="text"
+                value={albaceaDni}
+                onChange={(e) => setAlbaceaDni(e.target.value)}
                 placeholder="12345678A"
-                {...register('albaceaDni')}
-                className={errors.albaceaDni ? 'border-red-500' : ''}
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-canarias-500"
               />
-              {errors.albaceaDni && (
-                <p className="text-sm text-red-500">{errors.albaceaDni.message}</p>
-              )}
             </div>
           </div>
           <p className="flex items-start gap-2 text-xs text-gray-500 bg-gray-50 rounded-md p-3">
             <Info className="h-4 w-4 flex-shrink-0 mt-0.5 text-canarias-600" />
-            Si no designa albacea, el juez de primera instancia designará un albacea
-            de oficio. Puede designar también un albacea suplente en caso de impedimento.
+            Si no designa albacea, el juez de primera instancia designará un albacea de oficio.
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Testamento vital */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <HeartPulse className="h-5 w-5" />
+      <div className="rounded-lg border bg-white shadow-sm">
+        <div className="p-6 border-b">
+          <h3 className="flex items-center gap-2 text-lg font-semibold">
+            <HeartPulse className="h-5 w-5 text-canarias-600" />
             Testamento vital
-          </CardTitle>
-          <CardDescription>
-            Documento de voluntades anticipadas sobre tratamientos médicos en situaciones
-            de incapacidad o enfermedad terminal.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Documento de voluntades anticipadas sobre tratamientos médicos.
+          </p>
+        </div>
+        <div className="p-6">
           <label className="flex items-center gap-3 cursor-pointer rounded-lg border p-4 hover:bg-gray-50 transition-colors">
             <input
               type="checkbox"
@@ -154,62 +117,58 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
             <div>
               <p className="font-medium text-gray-900">Incluir testamento vital</p>
               <p className="text-sm text-gray-500">
-                Deseo que se registre mi testamento vital junto al testamento ante la Consejería de Sanidad
+                Registrar mi testamento vital ante la Consejería de Sanidad
               </p>
             </div>
           </label>
-
           {tvChecked && (
-            <div className="mt-4 rounded-lg bg-amber-50 border border-amber-200 p-4">
-              <p className="text-sm text-amber-800">
-                <Info className="inline h-4 w-4 mr-1" />
-                Su testamento vital será registrado ante la Consejería de Sanidad.
-                Puede modificarlo o revocarlo en cualquier momento.
-              </p>
+            <div className="mt-4 rounded-lg bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800">
+              <Info className="inline h-4 w-4 mr-1" />
+              Su testamento vital será registrado ante la Consejería de Sanidad.
+              Puede modificarlo o revocarlo en cualquier momento.
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Tutela de menores */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Baby className="h-5 w-5" />
+      <div className="rounded-lg border bg-white shadow-sm">
+        <div className="p-6 border-b">
+          <h3 className="flex items-center gap-2 text-lg font-semibold">
+            <Baby className="h-5 w-5 text-canarias-600" />
             Tutela de menores
-          </CardTitle>
-          <CardDescription>
-            Si tiene hijos menores de edad, designe quién será su tutor legal en caso
-            de fallecimiento.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Label htmlFor="tutelaMenores">Nombre del tutor designado (opcional)</Label>
-            <Input
-              id="tutelaMenores"
-              placeholder="Pedro Martín Sánchez — DNI: 87654321B"
-              {...register('tutelaMenores')}
-            />
-            <p className="text-xs text-gray-500">
-              Si no designa tutor, el juez de familia decidirá conforme al interés superior del menor.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          </h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Designe quién será tutor legal de sus hijos menores en caso de fallecimiento.
+          </p>
+        </div>
+        <div className="p-6 space-y-2">
+          <label className="text-sm font-medium">Nombre del tutor designado (opcional)</label>
+          <input
+            type="text"
+            value={tutela}
+            onChange={(e) => setTutela(e.target.value)}
+            placeholder="Pedro Martín Sánchez — DNI: 87654321B"
+            className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-canarias-500"
+          />
+          <p className="text-xs text-gray-500">
+            Si no designa tutor, el juez de familia decidirá conforme al interés superior del menor.
+          </p>
+        </div>
+      </div>
 
       {/* Legado solidario */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <HandHeart className="h-5 w-5" />
+      <div className="rounded-lg border bg-white shadow-sm">
+        <div className="p-6 border-b">
+          <h3 className="flex items-center gap-2 text-lg font-semibold">
+            <HandHeart className="h-5 w-5 text-canarias-600" />
             Legado solidario
-          </CardTitle>
-          <CardDescription>
-            Destine una parte de su patrimonio a una organización benéfica u ONG.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+          </h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Destine una parte de su patrimonio a una organización benéfica.
+          </p>
+        </div>
+        <div className="p-6 space-y-4">
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"
@@ -221,85 +180,75 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
               Deseo incluir un legado solidario a una ONG
             </span>
           </label>
-
           {lsChecked && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 rounded-lg bg-gray-50 p-4">
               <div className="space-y-2">
-                <Label htmlFor="ongNombre">Nombre de la ONG</Label>
-                <Input
-                  id="ongNombre"
+                <label className="text-sm font-medium">Nombre de la ONG</label>
+                <input
+                  type="text"
+                  value={ongNombre}
+                  onChange={(e) => setOngNombre(e.target.value)}
                   placeholder="Cáritas Diocesana de Tenerife"
-                  {...register('ongNombre')}
+                  className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-canarias-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="ongPorcentaje">Porcentaje del patrimonio (%)</Label>
-                <Input
-                  id="ongPorcentaje"
+                <label className="text-sm font-medium">Porcentaje del patrimonio (%)</label>
+                <input
                   type="number"
                   min={1}
                   max={100}
+                  value={ongPct}
+                  onChange={(e) => setOngPct(e.target.value)}
                   placeholder="5"
-                  {...register('ongPorcentaje')}
-                  className={errors.ongPorcentaje ? 'border-red-500' : ''}
+                  className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-canarias-500"
                 />
-                {errors.ongPorcentaje && (
-                  <p className="text-sm text-red-500">{errors.ongPorcentaje.message}</p>
-                )}
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Resumen de disposiciones */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm">Resumen de disposiciones</CardTitle>
-        </CardHeader>
-        <CardContent>
+      {/* Resumen */}
+      <div className="rounded-lg border bg-white shadow-sm">
+        <div className="p-4 border-b">
+          <h4 className="text-sm font-semibold">Resumen de disposiciones</h4>
+        </div>
+        <div className="p-4">
           <div className="flex flex-wrap gap-2">
-            {albaceaNombre?.trim() ? (
+            {albaceaNombre.trim() ? (
               <span className="inline-flex items-center rounded-full bg-canarias-100 px-3 py-1 text-xs font-medium text-canarias-700">
-                <UserCheck className="h-3 w-3 mr-1" />
-                Albacea: {albaceaNombre}
+                <UserCheck className="h-3 w-3 mr-1" /> Albacea: {albaceaNombre}
               </span>
             ) : (
-              <span className="inline-flex items-center rounded-full border border-gray-200 px-3 py-1 text-xs text-gray-500">
-                Sin albacea designado
-              </span>
+              <span className="inline-flex items-center rounded-full border px-3 py-1 text-xs text-gray-500">Sin albacea</span>
             )}
             {tvChecked && (
               <span className="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
-                <HeartPulse className="h-3 w-3 mr-1" />
-                Testamento vital
+                <HeartPulse className="h-3 w-3 mr-1" /> Testamento vital
               </span>
             )}
-            {tutelaMenores?.trim() && (
+            {tutela.trim() && (
               <span className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
-                <Baby className="h-3 w-3 mr-1" />
-                Tutela menores
+                <Baby className="h-3 w-3 mr-1" /> Tutela menores
               </span>
             )}
-            {lsChecked && ongNombre?.trim() && (
+            {lsChecked && ongNombre.trim() && (
               <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-                <HandHeart className="h-3 w-3 mr-1" />
-                Legado: {ongNombre} ({ongPorcentaje || 0}%)
+                <HandHeart className="h-3 w-3 mr-1" /> Legado: {ongNombre} ({ongPct || 0}%)
               </span>
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Navegación */}
       <div className="flex justify-between pt-4">
         <Button type="button" variant="outline" onClick={onBack}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Anterior
+          <ArrowLeft className="h-4 w-4 mr-2" /> Anterior
         </Button>
         <Button type="submit">
-          Continuar
-          <ArrowRight className="h-4 w-4 ml-2" />
+          Continuar <ArrowRight className="h-4 w-4 ml-2" />
         </Button>
       </div>
     </form>
