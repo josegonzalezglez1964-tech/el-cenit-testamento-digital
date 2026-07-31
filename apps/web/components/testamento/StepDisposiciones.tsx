@@ -4,23 +4,22 @@ import { useState } from 'react';
 import { Button } from '@el-cenit/ui';
 import { toast } from 'sonner';
 import {
-  FileSignature,
   ArrowRight,
   ArrowLeft,
-  HeartPulse,
-  Baby,
-  HandHeart,
-  UserCheck,
+  Heart,
+  Users,
+  User,
   Info,
+  FileText,
 } from 'lucide-react';
 import { useTestamentoStore } from '@/hooks/useTestamento';
 
-interface StepDisposicionesProps {
+interface Props {
   onNext: () => void;
   onBack: () => void;
 }
 
-export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
+export function StepDisposiciones({ onNext, onBack }: Props) {
   const { testamento, setDisposiciones } = useTestamentoStore();
   const disp = testamento.disposiciones || {};
 
@@ -58,7 +57,7 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
       <div className="rounded-lg border bg-white shadow-sm">
         <div className="p-6 border-b">
           <h3 className="flex items-center gap-2 text-lg font-semibold">
-            <UserCheck className="h-5 w-5 text-canarias-600" />
+            <User className="h-5 w-5 text-canarias-600" />
             Designación de albacea
           </h3>
           <p className="text-sm text-gray-500 mt-1">
@@ -99,7 +98,7 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
       <div className="rounded-lg border bg-white shadow-sm">
         <div className="p-6 border-b">
           <h3 className="flex items-center gap-2 text-lg font-semibold">
-            <HeartPulse className="h-5 w-5 text-canarias-600" />
+            <Heart className="h-5 w-5 text-canarias-600" />
             Testamento vital
           </h3>
           <p className="text-sm text-gray-500 mt-1">
@@ -135,7 +134,7 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
       <div className="rounded-lg border bg-white shadow-sm">
         <div className="p-6 border-b">
           <h3 className="flex items-center gap-2 text-lg font-semibold">
-            <Baby className="h-5 w-5 text-canarias-600" />
+            <Users className="h-5 w-5 text-canarias-600" />
             Tutela de menores
           </h3>
           <p className="text-sm text-gray-500 mt-1">
@@ -161,7 +160,7 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
       <div className="rounded-lg border bg-white shadow-sm">
         <div className="p-6 border-b">
           <h3 className="flex items-center gap-2 text-lg font-semibold">
-            <HandHeart className="h-5 w-5 text-canarias-600" />
+            <Heart className="h-5 w-5 text-canarias-600" />
             Legado solidario
           </h3>
           <p className="text-sm text-gray-500 mt-1">
@@ -218,24 +217,24 @@ export function StepDisposiciones({ onNext, onBack }: StepDisposicionesProps) {
           <div className="flex flex-wrap gap-2">
             {albaceaNombre.trim() ? (
               <span className="inline-flex items-center rounded-full bg-canarias-100 px-3 py-1 text-xs font-medium text-canarias-700">
-                <UserCheck className="h-3 w-3 mr-1" /> Albacea: {albaceaNombre}
+                <User className="h-3 w-3 mr-1" /> Albacea: {albaceaNombre}
               </span>
             ) : (
               <span className="inline-flex items-center rounded-full border px-3 py-1 text-xs text-gray-500">Sin albacea</span>
             )}
             {tvChecked && (
               <span className="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
-                <HeartPulse className="h-3 w-3 mr-1" /> Testamento vital
+                <Heart className="h-3 w-3 mr-1" /> Testamento vital
               </span>
             )}
             {tutela.trim() && (
               <span className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
-                <Baby className="h-3 w-3 mr-1" /> Tutela menores
+                <Users className="h-3 w-3 mr-1" /> Tutela menores
               </span>
             )}
             {lsChecked && ongNombre.trim() && (
               <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-                <HandHeart className="h-3 w-3 mr-1" /> Legado: {ongNombre} ({ongPct || 0}%)
+                <Heart className="h-3 w-3 mr-1" /> Legado: {ongNombre} ({ongPct || 0}%)
               </span>
             )}
           </div>
