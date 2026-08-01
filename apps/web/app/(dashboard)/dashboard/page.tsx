@@ -10,6 +10,7 @@ import {
   Shield,
   ArrowLeft,
   Trash2,
+  Plus,
 } from 'lucide-react';
 import { Button } from '@el-cenit/ui';
 import { useTestamentoStore, Testamento } from '@/hooks/useTestamento';
@@ -31,7 +32,8 @@ export default function DashboardPage() {
     const cargarTestamentos = () => {
       const testamentosLocal: TestamentoGuardado[] = [];
 
-      if (testamento.estado !== 'borrador' || testamento.herederos.length > 0) {
+      // El testamento actual del store (si tiene datos)
+      if (testamento.estado !== 'borrador' || testamento.herederos.length > 0 || testamento.bienes.length > 0) {
         testamentosLocal.push({
           ...testamento,
           id: 'actual',
@@ -39,6 +41,7 @@ export default function DashboardPage() {
         } as TestamentoGuardado);
       }
 
+      // Intentar cargar desde la API
       fetch('/api/testamento')
         .then((res) => res.json())
         .then((data) => {
@@ -51,7 +54,9 @@ export default function DashboardPage() {
             });
           }
         })
-        .catch(() => {})
+        .catch(() => {
+          // Fallback: solo localStorage
+        })
         .finally(() => {
           setTestamentos(testamentosLocal);
           setCargando(false);
@@ -72,7 +77,7 @@ export default function DashboardPage() {
 
   const handleEliminar = (id: string) => {
     if (!confirm('¿Estás seguro de que quieres eliminar este testamento?')) return;
-    
+
     if (id === 'actual') {
       localStorage.removeItem('el-cenit-testamento-storage');
       window.location.reload();
@@ -117,7 +122,7 @@ export default function DashboardPage() {
 
   if (cargando) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-canarias-600" />
       </div>
     );
@@ -125,9 +130,10 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <div className="bg-white border-b">
         <div className="mx-auto max-w-5xl px-4 py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 font-serif">
                 Panel de testamentos
@@ -137,8 +143,8 @@ export default function DashboardPage() {
               </p>
             </div>
             <Link href="/testamento/nuevo">
-              <Button variant="outline">
-                <ArrowLeft className="h-4 w-4 mr-2" />
+              <Button className="bg-canarias-600 hover:bg-canarias-700">
+                <Plus className="h-4 w-4 mr-2" />
                 Nuevo testamento
               </Button>
             </Link>
@@ -147,6 +153,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="mx-auto max-w-5xl px-4 py-8">
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-white rounded-lg border p-5">
             <p className="text-3xl font-bold text-canarias-600">{testamentos.length}</p>
@@ -166,6 +173,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Lista de testamentos */}
         {testamentos.length === 0 ? (
           <div className="bg-white rounded-xl border p-12 text-center">
             <FileText className="mx-auto h-16 w-16 text-gray-300 mb-4" />
@@ -177,6 +185,7 @@ export default function DashboardPage() {
             </p>
             <Link href="/testamento/nuevo">
               <Button className="bg-canarias-600 hover:bg-canarias-700">
+                <Plus className="h-4 w-4 mr-2" />
                 Crear testamento
               </Button>
             </Link>
@@ -190,13 +199,13 @@ export default function DashboardPage() {
               >
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex items-start gap-4">
-                    <div className="h-12 w-12 rounded-lg bg-canarias-50 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-lg bg-canarias-50 flex items-center justify-center shrink-0">
                       <FileText className="h-6 w-6 text-canarias-600" />
                     </div>
                     <div>
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h3 className="font-semibold text-gray-900">
-                          Testamento de {t.datosIdentidad?.nombre} {t.datosIdentidad?.apellidos}
+                          Testamento de {t.datosIdentidad?.nombre || 'Usuario'} {t.datosIdentidad?.apellidos || ''}
                         </h3>
                         {getEstadoBadge(t.estado)}
                       </div>
