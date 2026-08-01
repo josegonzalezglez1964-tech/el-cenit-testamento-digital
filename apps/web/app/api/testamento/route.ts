@@ -7,7 +7,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Validación básica
     if (!body.datosIdentidad || !body.herederos || !body.bienes) {
       return NextResponse.json(
         { error: 'Faltan datos obligatorios del testamento' },
