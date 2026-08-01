@@ -18,6 +18,7 @@ import { StepHerederos } from '@/components/testamento/StepHerederos';
 import { StepBienes } from '@/components/testamento/StepBienes';
 import { StepDisposiciones } from '@/components/testamento/StepDisposiciones';
 import { useTestamentoStore } from '@/hooks/useTestamento';
+import { generarPDF } from '@/lib/validators/generarPDF';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -31,11 +32,66 @@ const steps = [
 
 export default function NuevoTestamentoPage() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [guardando, setGuardando] = useState(false);
   const { testamento, firmarTestamento } = useTestamentoStore();
 
   const handleFirmar = async () => {
-    await firmarTestamento();
-    toast.success('Testamento firmado digitalmente');
+    setGuardando(true);
+    try {
+      // 1. Generar hash simulado de blockchain
+      const hash = '0x' + Array.from({ length: 64 }, () =>
+        Math.floor(Math.random() * 16).toString(16)
+      ).join('');
+
+      // 2. Actualizar estado en store
+      await firmarTestamento();
+
+      // 3. Preparar testamento completo
+      const testamentoCompleto = {
+        ...testamento,
+        estado: 'firmado' as const,
+        hashDocumento: hash,
+        selloTiempo: new Date().toISOString(),
+        blockchainTx: hash,
+      };
+
+      // 4. Guardar en backend (API)
+      const res = await fetch('/api/testamento', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testamentoCompleto),
+      });
+
+      if (!res.ok) {
+        throw new Error('Error al guardar en el servidor');
+      }
+
+      const data = await res.json();
+
+      // 5. Guardar ID en localStorage para referencia
+      if (data.id) {
+        const guardados = JSON.parse(localStorage.getItem('el-cenit-testamentos-ids') || '[]');
+        guardados.push(data.id);
+        localStorage.setItem('el-cenit-testamentos-ids', JSON.stringify(guardados));
+      }
+
+      toast.success('Testamento firmado y registrado correctamente');
+    } catch (err) {
+      console.error(err);
+      toast.error('Error al firmar el testamento. Inténtalo de nuevo.');
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  const handleDescargarPDF = () => {
+    try {
+      generarPDF(testamento);
+      toast.success('PDF descargado correctamente');
+    } catch (err) {
+      console.error(err);
+      toast.error('Error al generar el PDF');
+    }
   };
 
   const handleReiniciar = () => {
@@ -162,7 +218,7 @@ export default function NuevoTestamentoPage() {
                   <div className="space-y-1 text-sm text-gray-600">
                     <p><span className="font-medium">Nombre:</span> {testamento.datosIdentidad?.nombre} {testamento.datosIdentidad?.apellidos}</p>
                     <p><span className="font-medium">DNI:</span> {testamento.datosIdentidad?.dni}</p>
-                    <p><span className="font-medium">Email:</span> {testamento.datosIdentidad?.email || '—'}</p>
+                    <p><span className="font-medium">Email:</span> {(testamento.datosIdentidad as any)?.email || '—'}</p>
                   </div>
                 </div>
 
@@ -223,9 +279,13 @@ export default function NuevoTestamentoPage() {
                     <RotateCcw className="h-4 w-4 mr-2" />
                     Empezar de nuevo
                   </Button>
-                  <Button onClick={handleFirmar} className="bg-green-600 hover:bg-green-700">
+                  <Button 
+                    onClick={handleFirmar} 
+                    className="bg-green-600 hover:bg-green-700"
+                    disabled={guardando}
+                  >
                     <FileSignature className="h-4 w-4 mr-2" />
-                    Firmar testamento
+                    {guardando ? 'Firmando...' : 'Firmar testamento'}
                   </Button>
                 </div>
               </div>
@@ -237,7 +297,7 @@ export default function NuevoTestamentoPage() {
                     Testamento firmado digitalmente el {new Date().toLocaleDateString('es-ES')}
                   </span>
                   <div className="mt-3 flex justify-center gap-3">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={handleDescargarPDF}>
                       <Download className="h-4 w-4 mr-1" />
                       Descargar PDF
                     </Button>
