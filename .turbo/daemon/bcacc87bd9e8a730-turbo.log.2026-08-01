@@ -136,3 +136,13 @@
 2026-08-01T16:58:02.502641Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/hooks/useTestamento.ts")}
 2026-08-01T16:58:02.502768Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }}))
 2026-08-01T16:58:02.589325Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-08-01T17:00:28.201394Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/testamento/route.ts")}
+2026-08-01T17:00:28.201411Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-08-01T17:00:28.899613Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/testamento/route.ts")}
+2026-08-01T17:00:28.899632Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-08-01T17:00:28.899681Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-08-01T17:00:41.300244Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/testamento/route.ts")}
+2026-08-01T17:00:41.300263Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-08-01T17:00:41.692866Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/testamento/route.ts")}
+2026-08-01T17:00:41.695667Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-08-01T17:00:41.793986Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
