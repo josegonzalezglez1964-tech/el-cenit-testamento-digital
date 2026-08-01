@@ -1,79 +1,58 @@
-# �# �# � #l Cénit ·# �# �#ent# Digital de Tenerife
+# El Cénit · Testamento Digital de Tenerife
 
-**Protegiendo el legado de Canarias en la era digital** **Protegiend�**Protegiendo el legrincipal**Protegiendo el legado de Canarias en la era digital** **Protegiend�**Proca **Protegiendo el legado de Canaro l**Protegiendo el legado de Canarias en la era digital** **Protegiend�**Protegiendo el legrincipal**Protegiendo el legado de Canarias en la era digital** **Protegiend�**Proca **Protegiendo el legado de Canaro l**Protegiendo el legado de Canarias en la era digital** **Protegiend�egistro blockchain
-- 👥 Test- 👥 Test- 👥 Test- 👥 Test- 👥 Tes
-------------------------------lockchain (Alastria)
-- 📱 Diseño responsive accesible (WCAG 2.1 AA)
+&gt; **Protegiendo el legado de Canarias en la era digital**
+
+Plataforma web para la creación, firma y gestión de testamentos digitales con validez probatoria, registro en blockchain (Alastria) y cumplimiento de la Ley 59/2003 de firma electrónica.
+
+---
+
+## ✨ Características
+
+- 📝 **Wizard guiado** — 5 pasos intuitivos (datos personales, herederos, bienes, disposiciones, firma)
+- 🔐 **Firma digital** — DNIe / certificado digital con sello de tiempo y eIDAS
+- ⛓️ **Blockchain** — Registro inmutable en Alastria con hash único
+- 📄 **PDF oficial** — Generación de documento PDF formal con todos los datos
+- 📊 **Panel de usuario** — Dashboard para gestionar testamentos firmados y borradores
+- 🎥 **Videollamada con notario** — Firma en presencia de notario colegiado (próximamente)
+- ♿ **Accesible** — Diseño responsive conforme WCAG 2.1 AA
+
+---
+
+## 🚀 Tecnologías
+
+| Capa | Tecnología |
+|------|-----------|
+| Framework | Next.js 14 (App Router) |
+| Lenguaje | TypeScript |
+| Estilos | Tailwind CSS |
+| UI | Componentes propios `@el-cenit/ui` |
+| Estado | Zustand + persist (localStorage) |
+| Auth | NextAuth.js (Credentials) |
+| PDF | jsPDF + jspdf-autotable |
+| Blockchain | Alastria |
+| Monorepo | Turborepo + pnpm workspaces |
+
+---
 
 ## 📦 Instalación
 
 ```bash
-git clone https://github.com/tu-orggit clone https://githugital.git
+# 1. Clonar
+git clone https://github.com/josegonzalezglez1964-tech/el-cenit-testamento-digital.git
 cd el-cenit-testamento-digital
+
+# 2. Dependencias
 pnpm install
+
+# 3. Variables de entorno
 cp .env.example .env
+# Edita .env con tus credenciales
+
+# 4. Base de datos (si usas Docker/Prisma)
 pnpm docker:up
 pnpm db:generate
 pnpm db:migrate
 pnpm db:seed
+
+# 5. Arrancar
 pnpm dev
-
----
-
-## 📋 PASO 3: Configuración de Next.js
-
-Copia y pega:
-
-```bash
-cd ~/proyectos/el-cenit-testamento-digital
-
-# apps/web/package.json
-cat > apps/web/package.json << 'EOF'
-{
-  "name": "@el-cenit/web",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "type-check": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@el-cenit/ui": "workspace:*",
-    "@el-cenit/shared-types": "workspace:*",
-    "@el-cenit/firma-electronica": "workspace:*",
-    "@el-cenit/blockchain": "workspace:*",
-    "next": "14.0.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "next-auth": "^4.24.5",
-    "@auth/prisma-adapter": "^1.0.9",
-    "@prisma/client": "^5.7.0",
-    "zustand": "^4.4.7",
-    "@tanstack/react-query": "^5.13.0",
-    "@tanstack/react-table": "^8.10.7",
-    "react-hook-form": "^7.49.0",
-    "@hookform/resolvers": "^3.3.2",
-    "zod": "^3.22.4",
-    "framer-motion": "^10.16.16",
-    "lucide-react": "^0.294.0",    "lucide-react": "^0.294.0",    "lt-dropzone": "^14.2.3",
-    "    "    "    "    "    "    "    "   eer":     "    "    "    "et.io-client": "^4.7.2",
-    "qrcode.react"    "qrcode.react"    "qr": "^2.10.3",
-    "sonner": "^1.2.4",
-    "tailwind-merge": "^2.2.0",
-    "clsx": "^2.0.0",
-    "class-variance-authority": "^0.7.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "    "@types/react-dom": imple-peer"    "@types/react-dom": "    "@types/rea
-    "tailwindcss": "^3.3.6",
-    "postcss": "^8.4.32",
-    "autoprefixer": "^10.4.16",
-    "@tail    "@tail    "@ta0.5.    "@tail    "@tdcss/ty    "@tail    "@tail,
-    "eslint": "^8.55.0",
-    "eslint-config-next": "14.0.4"
-  }
-}
