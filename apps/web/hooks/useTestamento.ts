@@ -62,6 +62,7 @@ interface TestamentoState {
   validarPaso: (paso: number) => Promise<boolean>;
   guardarBorrador: () => Promise<void>;
   firmarTestamento: () => Promise<void>;
+  resetTestamento: () => void;
 }
 
 export const useTestamentoStore = create<TestamentoState>()(
@@ -161,6 +162,20 @@ export const useTestamentoStore = create<TestamentoState>()(
         set((state) => ({
           testamento: { ...state.testamento, estado: 'firmado' },
         }));
+      },
+
+      resetTestamento: () => {
+        set({
+          testamento: {
+            pasoActual: 1,
+            herederos: [],
+            bienes: [],
+            disposiciones: {
+              testamentoVital: false,
+            },
+            estado: 'borrador',
+          },
+        });
       },
     }),
     {
