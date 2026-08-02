@@ -21,7 +21,6 @@ model Testamento {
   hashDocumento String?
   selloTiempo   String?
   blockchainTx  String?
-  userId        String?
   
   @@map("testamentos")
 }
