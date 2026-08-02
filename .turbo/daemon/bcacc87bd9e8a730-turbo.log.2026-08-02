@@ -200,3 +200,11 @@
 2026-08-02T15:50:46.816045Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
 2026-08-02T15:50:47.015634Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
 2026-08-02T15:50:47.015652Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-08-02T15:51:08.322112Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.2037966560"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2026-08-02T15:51:08.322129Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-08-02T15:51:08.418759Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json.538595500")}
+2026-08-02T15:51:08.418775Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-08-02T15:51:08.516742Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json"), AnchoredSystemPathBuf("package.json.538595500")}
+2026-08-02T15:51:08.516763Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2026-08-02T15:51:08.716327Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-08-02T15:51:08.716346Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
