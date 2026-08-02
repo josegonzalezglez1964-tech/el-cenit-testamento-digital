@@ -6,6 +6,8 @@ import * as z from 'zod';
 import { Input, Label, Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@el-cenit/ui';
 import { toast } from 'sonner';
 import { User, Calendar, MapPin, Phone, Mail } from 'lucide-react';
+import { useTestamentoStore } from '@/hooks/useTestamento';
+import { useEffect } from 'react';
 
 const schema = z.object({
   nombre: z.string().min(2, 'El nombre es obligatorio'),
@@ -24,17 +26,50 @@ interface StepDatosProps {
 }
 
 export function StepDatos({ onNext }: StepDatosProps) {
+  const { setDatosIdentidad, testamento } = useTestamentoStore();
+  
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
+  // Pre-cargar datos si ya existen en el store (al volver atrás)
+  useEffect(() => {
+    if (testamento.datosIdentidad) {
+      const d = testamento.datosIdentidad;
+      reset({
+        nombre: d.nombre || '',
+        apellidos: d.apellidos || '',
+        dni: d.dni || '',
+        fechaNacimiento: d.fechaNacimiento || '',
+        direccion: d.domicilio?.calle || '',
+        telefono: d.domicilio?.telefono || '',
+        email: d.domicilio?.email || '',
+      });
+    }
+  }, [reset, testamento.datosIdentidad]);
+
   const onSubmit = async (data: FormData) => {
     try {
-      console.log('Datos del testador:', data);
+      // ✅ GUARDAR EN EL STORE GLOBAL (esto faltaba)
+      setDatosIdentidad({
+        nombre: data.nombre,
+        apellidos: data.apellidos,
+        dni: data.dni,
+        fechaNacimiento: data.fechaNacimiento,
+        estadoCivil: '',
+        domicilio: {
+          calle: data.direccion,
+          telefono: data.telefono,
+          email: data.email,
+        },
+      });
+      
+      console.log('Datos del testador guardados en store:', data);
       toast.success('Datos guardados correctamente');
       onNext();
     } catch (error) {
