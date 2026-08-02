@@ -12,21 +12,15 @@ model Testamento {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   
-  // Datos del testador (JSON para flexibilidad)
   datosIdentidad Json?
-  
-  // Herederos, bienes, disposiciones (JSON arrays)
   herederos     Json
   bienes        Json
   disposiciones Json
   
-  // Estado y firma
   estado        String   @default("borrador")
   hashDocumento String?
   selloTiempo   String?
   blockchainTx  String?
-  
-  // Relación con usuario (para cuando tengamos auth real)
   userId        String?
   
   @@map("testamentos")
