@@ -79,29 +79,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-      if (!testamento) {
-        return NextResponse.json(
-          { error: 'Testamento no encontrado' },
-          { status: 404 }
-        );
-      }
-
-      return NextResponse.json({ success: true, testamento });
-    }
-
-    const testamentos = await prisma.testamento.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
-
-    return NextResponse.json({
-      success: true,
-      testamentos,
-    });
-  } catch (error) {
-    console.error('Error obteniendo testamentos:', error);
-    return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
-    );
-  }
-}
