@@ -30,6 +30,6 @@
     "pnpm": ">=8.0.0"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.0"
+    "@prisma/client": "^5.22.0"
   }
 }
