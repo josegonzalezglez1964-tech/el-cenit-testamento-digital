@@ -354,3 +354,24 @@
 2026-08-02T17:00:50.946880Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/.next")}
 2026-08-02T17:00:50.946897Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }}))
 2026-08-02T17:00:50.954013Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-08-02T17:07:32.865941Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_13605_2266e1b8c406dca7ba3dec62a31f7068"), AnchoredSystemPathBuf("")}
+2026-08-02T17:07:32.865959Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-08-02T17:07:33.866218Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-08-02T17:07:33.866233Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-08-02T17:07:35.066257Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_13608_c79466718223d6f846ffd32d86ff3aa3")}
+2026-08-02T17:07:35.066275Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-08-02T17:07:35.465794Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-08-02T17:07:35.465810Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-08-02T17:07:36.465745Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.1230224106")}
+2026-08-02T17:07:36.465762Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-08-02T17:07:36.565965Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.1230224106"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2026-08-02T17:07:36.565983Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-08-02T17:07:36.665937Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json.2163637147")}
+2026-08-02T17:07:36.665954Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-08-02T17:07:36.771330Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json.2163637147"), AnchoredSystemPathBuf("package.json")}
+2026-08-02T17:07:36.771355Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2026-08-02T17:07:36.965912Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-08-02T17:07:36.965928Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-08-02T17:07:49.166834Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/node_modules"), AnchoredSystemPathBuf("apps/web/.next")}
+2026-08-02T17:07:49.166853Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-08-02T17:07:49.238205Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
