@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../auth/[...nextauth]/route';
 import { prisma } from '../../../lib/prisma';
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
 
-    // Validación básica
     if (!body.datosIdentidad || !body.herederos || !body.bienes) {
       return NextResponse.json(
         { error: 'Faltan datos obligatorios del testamento' },
@@ -15,6 +21,7 @@ export async function POST(req: NextRequest) {
 
     const nuevoTestamento = await prisma.testamento.create({
       data: {
+        userId: session.user.id,
         datosIdentidad: body.datosIdentidad,
         herederos: body.herederos,
         bienes: body.bienes,
@@ -27,55 +34,43 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(
-      {
-        success: true,
-        id: nuevoTestamento.id,
-        message: 'Testamento guardado correctamente en la base de datos',
-      },
+      { success: true, id: nuevoTestamento.id, message: 'Testamento guardado correctamente' },
       { status: 201 }
     );
   } catch (error) {
     console.error('Error guardando testamento:', error);
-    return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }
 
 export async function GET(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
     if (id) {
-      const testamento = await prisma.testamento.findUnique({
-        where: { id },
-      });
+      const testamento = await prisma.testamento.findUnique({ where: { id } });
 
-      if (!testamento) {
-        return NextResponse.json(
-          { error: 'Testamento no encontrado' },
-          { status: 404 }
-        );
+      if (!testamento || testamento.userId !== session.user.id) {
+        return NextResponse.json({ error: 'Testamento no encontrado' }, { status: 404 });
       }
 
       return NextResponse.json({ success: true, testamento });
     }
 
     const testamentos = await prisma.testamento.findMany({
+      where: { userId: session.user.id },
       orderBy: { createdAt: 'desc' },
     });
 
-    return NextResponse.json({
-      success: true,
-      testamentos,
-    });
+    return NextResponse.json({ success: true, testamentos });
   } catch (error) {
     console.error('Error obteniendo testamentos:', error);
-    return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }
