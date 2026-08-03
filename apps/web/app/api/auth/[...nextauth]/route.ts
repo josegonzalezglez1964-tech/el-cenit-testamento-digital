@@ -1,5 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import bcrypt from 'bcryptjs';
+import { prisma } from '../../../../lib/prisma';
 
 const handler = NextAuth({
   session: {
@@ -22,59 +24,34 @@ const handler = NextAuth({
           return null;
         }
 
-        // ============================================
-        // MODO DESARROLLO: acepta cualquier email/password válidos
-        // En producción esto se reemplaza por validación real con Prisma/DB
-        // ============================================
         const email = credentials.email.trim().toLowerCase();
-        const password = credentials.password;
 
-        // Usuario de demo (siempre funciona)
-        if (email === 'test@cenit.es' && password === 'password123') {
-          return {
-            id: '1',
-            email: 'test@cenit.es',
-            name: 'Usuario Demo',
-            role: 'TESTADOR',
-          };
-        }
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) return null;
 
-        // Tu usuario personal (añadido para desarrollo)
-        if (email === 'josegonzalezglez1964@gmail.com') {
-          return {
-            id: '2',
-            email: 'josegonzalezglez1964@gmail.com',
-            name: 'José González',
-            role: 'TESTADOR',
-          };
-        }
+        const passwordValida = await bcrypt.compare(credentials.password, user.passwordHash);
+        if (!passwordValida) return null;
 
-        // Cualquier otro email con contraseña de al menos 6 caracteres
-        // (solo para desarrollo local — quitar en producción)
-        if (password.length >= 6) {
-          return {
-            id: crypto.randomUUID(),
-            email: email,
-            name: email.split('@')[0],
-            role: 'TESTADOR',
-          };
-        }
-
-        return null;
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.nombre || user.email.split('@')[0],
+          role: user.role,
+        };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role;
+        token.role = (user as any).role;
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.sub as string;
-        session.user.role = token.role as string;
+        (session.user as any).role = token.role as string;
       }
       return session;
     },
