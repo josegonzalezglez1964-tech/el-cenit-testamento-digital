@@ -248,3 +248,19 @@
 2026-08-03T15:45:42.692142Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
 2026-08-03T15:45:42.762867Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
 2026-08-03T15:45:42.762878Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-08-03T15:45:55.362884Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("apps"), AnchoredSystemPathBuf("prisma"), AnchoredSystemPathBuf("packages"), AnchoredSystemPathBuf("node_modules")}
+2026-08-03T15:45:55.362911Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/firma-electronica"), path: AnchoredSystemPathBuf("packages/firma-electronica") }, WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-08-03T15:45:55.363007Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-08-03T15:45:55.463397Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/lib"), AnchoredSystemPathBuf("packages/firma-electronica"), AnchoredSystemPathBuf("apps/web"), AnchoredSystemPathBuf("packages/ui")}
+2026-08-03T15:45:55.463415Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }, WorkspacePackage { name: Other("@el-cenit/ui"), path: AnchoredSystemPathBuf("packages/ui") }, WorkspacePackage { name: Other("@el-cenit/firma-electronica"), path: AnchoredSystemPathBuf("packages/firma-electronica") }}))
+2026-08-03T15:45:55.519028Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-08-03T15:45:55.519094Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-08-03T15:45:56.162164Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-08-03T15:45:56.162181Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-08-03T15:45:56.262623Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/firma-electronica/node_modules"), AnchoredSystemPathBuf("packages/ui/node_modules")}
+2026-08-03T15:45:56.262641Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/ui"), path: AnchoredSystemPathBuf("packages/ui") }, WorkspacePackage { name: Other("@el-cenit/firma-electronica"), path: AnchoredSystemPathBuf("packages/firma-electronica") }}))
+2026-08-03T15:45:56.262746Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-08-03T15:45:56.262767Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-08-03T15:45:56.362149Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/lib/validators"), AnchoredSystemPathBuf("apps/web/node_modules"), AnchoredSystemPathBuf("apps/web/.next")}
+2026-08-03T15:45:56.362167Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@el-cenit/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-08-03T15:45:56.398567Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
