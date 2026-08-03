@@ -7,20 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  passwordHash  String
+  nombre        String?
+  role          String       @default("TESTADOR")
+  createdAt     DateTime     @default(now())
+  testamentos   Testamento[]
+
+  @@map("users")
+}
+
 model Testamento {
   id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  
+
   datosIdentidad Json?
   herederos     Json
   bienes        Json
   disposiciones Json
-  
+
   estado        String   @default("borrador")
   hashDocumento String?
   selloTiempo   String?
   blockchainTx  String?
-  
+
   @@map("testamentos")
 }
