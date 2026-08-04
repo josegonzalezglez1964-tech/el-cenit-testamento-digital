@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
 
 export interface Heredero {
   id: string;
@@ -64,6 +64,28 @@ interface TestamentoState {
   firmarTestamento: () => Promise<void>;
   resetTestamento: () => void;
 }
+
+const encryptedStorage: StateStorage = {
+  getItem: async (name) => {
+    const value = localStorage.getItem(name);
+    if (!value) return null;
+    try {
+      const { decryptData } = await import('@/lib/crypto/secureStorage');
+      return await decryptData(value);
+    } catch {
+      localStorage.removeItem(name);
+      return null;
+    }
+  },
+  setItem: async (name, value) => {
+    const { encryptData } = await import('@/lib/crypto/secureStorage');
+    const encrypted = await encryptData(value);
+    localStorage.setItem(name, encrypted);
+  },
+  removeItem: async (name) => {
+    localStorage.removeItem(name);
+  },
+};
 
 export const useTestamentoStore = create<TestamentoState>()(
   persist(
@@ -181,6 +203,7 @@ export const useTestamentoStore = create<TestamentoState>()(
     {
       name: 'el-cenit-testamento-storage',
       partialize: (state) => ({ testamento: state.testamento }),
+      storage: createJSONStorage(() => encryptedStorage),
     }
   )
 );
