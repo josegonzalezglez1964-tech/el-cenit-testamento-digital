@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Menu, X, FileText, Shield } from 'lucide-react';
+import { Menu, X, FileText, Shield, LogOut } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
 
   const navLinks = [
     { href: '/', label: 'Inicio' },
@@ -47,17 +49,28 @@ export function Navbar() {
             </Link>
           ))}
         </div>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link
-            href="/login"
-            className="text-sm font-semibold leading-6 text-gray-900 hover:text-cenit-600 transition-colors"
-          >
-            Iniciar sesión <span aria-hidden="true">&rarr;</span>
-          </Link>
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:gap-x-4">
+          {status === 'loading' ? null : session ? (
+            <>
+              <span className="text-sm text-gray-600">{session.user?.email}</span>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="flex items-center gap-1 text-sm font-semibold leading-6 text-gray-900 hover:text-cenit-600 transition-colors"
+              >
+                <LogOut className="h-4 w-4" /> Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="text-sm font-semibold leading-6 text-gray-900 hover:text-cenit-600 transition-colors"
+            >
+              Iniciar sesión <span aria-hidden="true">&rarr;</span>
+            </Link>
+          )}
         </div>
       </nav>
 
-      {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden">
           <div className="space-y-1 px-6 pb-4 pt-2">
@@ -71,13 +84,25 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link
-              href="/login"
-              className="block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-cenit-600 hover:bg-gray-50"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Iniciar sesión
-            </Link>
+            {session ? (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  signOut({ callbackUrl: '/' });
+                }}
+                className="block w-full text-left rounded-lg px-3 py-2 text-base font-semibold leading-7 text-cenit-600 hover:bg-gray-50"
+              >
+                Cerrar sesión ({session.user?.email})
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-cenit-600 hover:bg-gray-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Iniciar sesión
+              </Link>
+            )}
           </div>
         </div>
       )}
