@@ -21,4 +21,5 @@ Thumbs.db
 infrastructure/docker/ssl/
 coverage/
 .nyc_output/
-.turbo/apps/web/scripts/
+.turbo/
+apps/web/scripts/
