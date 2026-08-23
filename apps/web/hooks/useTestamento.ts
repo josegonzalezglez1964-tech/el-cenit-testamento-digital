@@ -52,6 +52,8 @@ export interface Testamento {
 
 interface TestamentoState {
   testamento: Testamento;
+  guardando: boolean;
+  ultimoGuardado: string | null;
   setPaso: (paso: number) => void;
   setDatosIdentidad: (datos: any) => void;
   addHeredero: (heredero: Heredero) => void;
@@ -60,7 +62,7 @@ interface TestamentoState {
   removeBien: (id: string) => void;
   setDisposiciones: (disp: any) => void;
   validarPaso: (paso: number) => Promise<boolean>;
-  guardarBorrador: () => Promise<void>;
+  guardarBorrador: () => Promise<boolean>;
   firmarTestamento: () => Promise<void>;
   resetTestamento: () => void;
 }
@@ -99,6 +101,8 @@ export const useTestamentoStore = create<TestamentoState>()(
         },
         estado: 'borrador',
       },
+      guardando: false,
+      ultimoGuardado: null,
 
       setPaso: (paso) => {
         set((state) => ({
@@ -177,7 +181,49 @@ export const useTestamentoStore = create<TestamentoState>()(
       },
 
       guardarBorrador: async () => {
-        console.log('Borrador guardado');
+        const { testamento } = get();
+
+        // No hay nada útil que guardar todavía (el usuario no ha pasado del paso 1)
+        if (!testamento.datosIdentidad?.nombre) {
+          return false;
+        }
+
+        set({ guardando: true });
+
+        try {
+          const payload = {
+            id: testamento.id,
+            datosIdentidad: testamento.datosIdentidad,
+            herederos: testamento.herederos,
+            bienes: testamento.bienes,
+            disposiciones: testamento.disposiciones,
+            estado: testamento.estado,
+          };
+
+          const res = await fetch('/api/testamento', {
+            method: testamento.id ? 'PUT' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) {
+            throw new Error('No se pudo guardar el borrador');
+          }
+
+          const data = await res.json();
+
+          set((state) => ({
+            testamento: { ...state.testamento, id: state.testamento.id ?? data.id },
+            guardando: false,
+            ultimoGuardado: new Date().toISOString(),
+          }));
+
+          return true;
+        } catch (error) {
+          console.error('Error guardando borrador:', error);
+          set({ guardando: false });
+          return false;
+        }
       },
 
       firmarTestamento: async () => {
