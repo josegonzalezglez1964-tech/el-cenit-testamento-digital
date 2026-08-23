@@ -43,6 +43,49 @@ export async function POST(req: NextRequest) {
   }
 }
 
+export async function PUT(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+
+    if (!body.id) {
+      return NextResponse.json({ error: 'Falta el id del testamento' }, { status: 400 });
+    }
+
+    const existente = await prisma.testamento.findUnique({ where: { id: body.id } });
+
+    if (!existente || existente.userId !== session.user.id) {
+      return NextResponse.json({ error: 'Testamento no encontrado' }, { status: 404 });
+    }
+
+    const actualizado = await prisma.testamento.update({
+      where: { id: body.id },
+      data: {
+        datosIdentidad: body.datosIdentidad ?? existente.datosIdentidad,
+        herederos: body.herederos ?? existente.herederos,
+        bienes: body.bienes ?? existente.bienes,
+        disposiciones: body.disposiciones ?? existente.disposiciones,
+        estado: body.estado ?? existente.estado,
+        hashDocumento: body.hashDocumento ?? existente.hashDocumento,
+        selloTiempo: body.selloTiempo ?? existente.selloTiempo,
+        blockchainTx: body.blockchainTx ?? existente.blockchainTx,
+      },
+    });
+
+    return NextResponse.json(
+      { success: true, id: actualizado.id, message: 'Testamento actualizado correctamente' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error actualizando testamento:', error);
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+  }
+}
+
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
