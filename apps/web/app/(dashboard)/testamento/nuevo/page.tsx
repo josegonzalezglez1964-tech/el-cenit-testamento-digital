@@ -87,9 +87,9 @@ export default function NuevoTestamentoPage() {
         blockchainTx: hash,
       };
 
-      // 4. Guardar en backend (API)
+      // 4. Guardar en backend (API) — reutiliza el id si ya existe un borrador guardado
       const res = await fetch('/api/testamento', {
-        method: 'POST',
+        method: testamento.id ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(testamentoCompleto),
       });
@@ -100,12 +100,10 @@ export default function NuevoTestamentoPage() {
 
       const data = await res.json();
 
-      // 5. Guardar ID en localStorage para referencia
-      if (data.id) {
-        const guardados = JSON.parse(localStorage.getItem('el-cenit-testamentos-ids') || '[]');
-        guardados.push(data.id);
-        localStorage.setItem('el-cenit-testamentos-ids', JSON.stringify(guardados));
-      }
+      // 5. Guardar el id en el store para que futuras acciones actualicen, no dupliquen
+      useTestamentoStore.setState((state) => ({
+        testamento: { ...state.testamento, id: state.testamento.id ?? data.id },
+      }));
 
       toast.success('Testamento firmado y registrado correctamente');
     } catch (err) {
