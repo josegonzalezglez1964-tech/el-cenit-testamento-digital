@@ -83,18 +83,10 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">
-                <Lock className="inline h-4 w-4 mr-1" />
-                Contraseña
-              </Label>
-              <Link
-                href="/recuperar-password"
-                className="text-xs text-canarias-600 hover:underline"
-              >
-                ¿Olvidó su contraseña?
-              </Link>
-            </div>
+            <Label htmlFor="password">
+              <Lock className="inline h-4 w-4 mr-1" />
+              Contraseña
+            </Label>
             <Input
               id="password"
               type="password"
