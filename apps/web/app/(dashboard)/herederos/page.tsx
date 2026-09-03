@@ -17,12 +17,12 @@ interface HerederoItem {
 export default function HerederosPage() {
   const [herederos, setHerederos] = useState<HerederoItem[]>([]);
   const [form, setForm] = useState({
-    nombre: '',
-    apellidos: '',
-    dni: '',
-    tipo: 'POR_CUOTA' as const,
-    porcentaje: '',
-  });
+  nombre: '',
+  apellidos: '',
+  dni: '',
+  tipo: 'POR_CUOTA' as HerederoItem['tipo'],
+  porcentaje: '',
+});
 
   const totalPorcentaje = herederos.reduce((sum, h) => sum + h.porcentaje, 0);
 
