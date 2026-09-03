@@ -24,7 +24,10 @@ async function getOrCreateDeviceKey(): Promise<CryptoKey> {
     sessionStorage.setItem(DEVICE_KEY_NAME, bufferToBase64(keyBytes));
   }
 
-  return crypto.subtle.importKey('raw', keyBytes, { name: 'AES-GCM' }, false, [
+  const keyBuffer = new ArrayBuffer(keyBytes.byteLength);
+  new Uint8Array(keyBuffer).set(keyBytes);
+
+  return crypto.subtle.importKey('raw', keyBuffer, { name: 'AES-GCM' }, false, [
     'encrypt',
     'decrypt',
   ]);
