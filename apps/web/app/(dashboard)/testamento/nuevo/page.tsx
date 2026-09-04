@@ -11,6 +11,7 @@ import {
   ArrowLeft,
   Download,
   RotateCcw,
+  AlertCircle,
 } from 'lucide-react';
 import { Button } from '@el-cenit/ui';
 import { StepDatos } from '@/components/testamento/StepDatos';
@@ -21,6 +22,7 @@ import { useTestamentoStore } from '@/hooks/useTestamento';
 import { generarPDF } from '@/lib/validators/generarPDF';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 const steps = [
   { id: 1, label: 'Datos personales', icon: User },
@@ -31,8 +33,16 @@ const steps = [
 ];
 
 export default function NuevoTestamentoPage() {
+  const searchParams = useSearchParams();
+  const testamentoId = searchParams.get('id');
+
   const [currentStep, setCurrentStep] = useState(1);
   const [guardando, setGuardando] = useState(false);
+  const [cargandoBorrador, setCargandoBorrador] = useState(Boolean(testamentoId));
+  const [errorBorrador, setErrorBorrador] = useState(false);
+  const [ocultarDatosPersonales, setOcultarDatosPersonales] =
+  useState(Boolean(testamentoId));
+
   const {
     testamento,
     firmarTestamento,
@@ -41,23 +51,86 @@ export default function NuevoTestamentoPage() {
     ultimoGuardado,
   } = useTestamentoStore();
 
-  // Autoguardado del borrador al avanzar de paso (silencioso, sin toast salvo error)
-  const primerRender = useRef(true);
+  // Cargar desde Supabase el borrador concreto indicado por el dashboard.
   useEffect(() => {
+    if (!testamentoId) {
+      setCargandoBorrador(false);
+      return;
+    }
+
+    let cancelado = false;
+
+    const cargarBorrador = async () => {
+      setCargandoBorrador(true);
+      setErrorBorrador(false);
+
+      try {
+        const res = await fetch(
+          `/api/testamento?id=${encodeURIComponent(testamentoId)}`
+        );
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success || !data.testamento) {
+          throw new Error('No se pudo cargar el testamento');
+        }
+
+        if (cancelado) return;
+
+        useTestamentoStore.setState({
+          testamento: data.testamento,
+        });
+
+        setCurrentStep(
+          typeof data.testamento.pasoActual === 'number'
+            ? Math.min(Math.max(data.testamento.pasoActual, 1), 5)
+            : 1
+        );
+      } catch (error) {
+        if (cancelado) return;
+
+        console.error('Error cargando borrador:', error);
+        setErrorBorrador(true);
+        toast.error('No se pudo cargar el borrador');
+      } finally {
+        if (!cancelado) {
+          setCargandoBorrador(false);
+        }
+      }
+    };
+
+    cargarBorrador();
+
+    return () => {
+      cancelado = true;
+    };
+  }, [testamentoId]);
+
+  // Autoguardado del borrador al avanzar de paso
+  // (silencioso, sin toast salvo error).
+  const primerRender = useRef(true);
+
+  useEffect(() => {
+    if (cargandoBorrador || errorBorrador) {
+      return;
+    }
+
     if (primerRender.current) {
       primerRender.current = false;
       return;
     }
+
     guardarBorrador().then((ok) => {
       if (!ok && testamento.datosIdentidad?.nombre) {
         toast.error('No se pudo guardar el borrador automáticamente');
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentStep]);
+  }, [currentStep, cargandoBorrador, errorBorrador]);
 
   const handleGuardarBorrador = async () => {
     const ok = await guardarBorrador();
+
     if (ok) {
       toast.success('Borrador guardado');
     } else if (!testamento.datosIdentidad?.nombre) {
@@ -69,6 +142,7 @@ export default function NuevoTestamentoPage() {
 
   const handleFirmar = async () => {
     setGuardando(true);
+
     try {
       // 1. Generar hash simulado de blockchain
       const hash = '0x' + Array.from({ length: 64 }, () =>
@@ -100,9 +174,13 @@ export default function NuevoTestamentoPage() {
 
       const data = await res.json();
 
-      // 5. Guardar el id en el store para que futuras acciones actualicen, no dupliquen
+      // 5. Guardar el id en el store para que futuras acciones actualicen,
+      // no dupliquen.
       useTestamentoStore.setState((state) => ({
-        testamento: { ...state.testamento, id: state.testamento.id ?? data.id },
+        testamento: {
+          ...state.testamento,
+          id: state.testamento.id ?? data.id,
+        },
       }));
 
       toast.success('Testamento firmado y registrado correctamente');
@@ -131,6 +209,41 @@ export default function NuevoTestamentoPage() {
     }
   };
 
+  if (cargandoBorrador) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-canarias-600 mx-auto" />
+          <p className="mt-4 text-sm text-gray-600">
+            Cargando borrador...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (errorBorrador) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="w-full max-w-md rounded-xl border bg-white p-8 text-center shadow-sm">
+          <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
+          <h1 className="text-xl font-bold text-gray-900">
+            No se pudo cargar el borrador
+          </h1>
+          <p className="mt-2 text-gray-600">
+            El testamento solicitado no está disponible. Puede volver al
+            panel y volver a intentarlo.
+          </p>
+          <Link href="/dashboard">
+            <Button className="mt-6 bg-canarias-600 hover:bg-canarias-700">
+              Volver al panel
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-5xl space-y-8 py-8">
       {/* Header */}
@@ -151,9 +264,11 @@ export default function NuevoTestamentoPage() {
           >
             {guardandoBorrador ? 'Guardando...' : 'Guardar borrador'}
           </Button>
+
           {ultimoGuardado && (
             <span className="text-xs text-gray-400">
-              Guardado {new Date(ultimoGuardado).toLocaleTimeString('es-ES', {
+              Guardado{' '}
+              {new Date(ultimoGuardado).toLocaleTimeString('es-ES', {
                 hour: '2-digit',
                 minute: '2-digit',
               })}
@@ -171,10 +286,15 @@ export default function NuevoTestamentoPage() {
             const isCompleted = step.id < currentStep;
 
             return (
-              <div key={step.id} className="flex flex-col items-center relative z-10">
+              <div
+                key={step.id}
+                className="flex flex-col items-center relative z-10"
+              >
                 <button
                   onClick={() => {
-                    if (step.id <= currentStep) setCurrentStep(step.id);
+                    if (step.id <= currentStep) {
+                      setCurrentStep(step.id);
+                    }
                   }}
                   disabled={step.id > currentStep}
                   className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 ${
@@ -187,6 +307,7 @@ export default function NuevoTestamentoPage() {
                 >
                   <Icon className="h-5 w-5" />
                 </button>
+
                 <span
                   className={`mt-2 text-xs font-medium ${
                     isActive
@@ -223,37 +344,49 @@ export default function NuevoTestamentoPage() {
           transition={{ duration: 0.3 }}
         >
           {currentStep === 1 && (
-            <StepDatos onNext={() => setCurrentStep(2)} />
-          )}
+  <StepDatos
+    ocultarDatosPersonales={ocultarDatosPersonales}
+    onNext={() => {
+      setOcultarDatosPersonales(false);
+      setCurrentStep(2);
+    }}
+  />
+)}
+
           {currentStep === 2 && (
             <StepHerederos
               onNext={() => setCurrentStep(3)}
               onBack={() => setCurrentStep(1)}
             />
           )}
+
           {currentStep === 3 && (
             <StepBienes
               onNext={() => setCurrentStep(4)}
               onBack={() => setCurrentStep(2)}
             />
           )}
+
           {currentStep === 4 && (
             <StepDisposiciones
               onNext={() => setCurrentStep(5)}
               onBack={() => setCurrentStep(3)}
             />
           )}
+
           {currentStep === 5 && (
             <div className="space-y-6">
               {/* Resumen final */}
               <div className="rounded-xl border bg-white p-8 text-center shadow-sm">
                 <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
+
                 <h3 className="text-2xl font-bold text-gray-900">
                   ¡Testamento completado!
                 </h3>
+
                 <p className="text-gray-600 mt-2 max-w-lg mx-auto">
-                  Ha completado todos los pasos. Revise el resumen antes de firmar
-                  digitalmente su testamento.
+                  Ha completado todos los pasos. Revise el resumen antes de
+                  firmar digitalmente su testamento.
                 </p>
               </div>
 
@@ -264,10 +397,23 @@ export default function NuevoTestamentoPage() {
                     <User className="h-4 w-4 text-canarias-600" />
                     Datos del testador
                   </h4>
+
                   <div className="space-y-1 text-sm text-gray-600">
-                    <p><span className="font-medium">Nombre:</span> {testamento.datosIdentidad?.nombre} {testamento.datosIdentidad?.apellidos}</p>
-                    <p><span className="font-medium">DNI:</span> {testamento.datosIdentidad?.dni}</p>
-                    <p><span className="font-medium">Email:</span> {(testamento.datosIdentidad as any)?.email || '—'}</p>
+                    <p>
+                      <span className="font-medium">Nombre:</span>{' '}
+                      {testamento.datosIdentidad?.nombre}{' '}
+                      {testamento.datosIdentidad?.apellidos}
+                    </p>
+
+                    <p>
+                      <span className="font-medium">DNI:</span>{' '}
+                      {testamento.datosIdentidad?.dni}
+                    </p>
+
+                    <p>
+                      <span className="font-medium">Email:</span>{' '}
+                      {(testamento.datosIdentidad as any)?.email || '—'}
+                    </p>
                   </div>
                 </div>
 
@@ -276,12 +422,21 @@ export default function NuevoTestamentoPage() {
                     <Users className="h-4 w-4 text-canarias-600" />
                     Herederos ({testamento.herederos.length})
                   </h4>
+
                   <div className="space-y-1 text-sm text-gray-600">
                     {testamento.herederos.map((h) => (
-                      <p key={h.id}>{h.nombre} {h.apellidos} — {h.porcentaje}% ({h.tipo})</p>
+                      <p key={h.id}>
+                        {h.nombre} {h.apellidos} — {h.porcentaje}% ({h.tipo})
+                      </p>
                     ))}
+
                     <p className="pt-1 font-medium text-canarias-700">
-                      Total asignado: {testamento.herederos.reduce((s, h) => s + h.porcentaje, 0)}%
+                      Total asignado:{' '}
+                      {testamento.herederos.reduce(
+                        (s, h) => s + h.porcentaje,
+                        0
+                      )}
+                      %
                     </p>
                   </div>
                 </div>
@@ -291,12 +446,21 @@ export default function NuevoTestamentoPage() {
                     <Package className="h-4 w-4 text-canarias-600" />
                     Bienes ({testamento.bienes.length})
                   </h4>
+
                   <div className="space-y-1 text-sm text-gray-600">
                     {testamento.bienes.map((b) => (
-                      <p key={b.id}>{b.descripcion} — {b.valorEstimado.toLocaleString('es-ES')} €</p>
+                      <p key={b.id}>
+                        {b.descripcion} —{' '}
+                        {b.valorEstimado.toLocaleString('es-ES')} €
+                      </p>
                     ))}
+
                     <p className="pt-1 font-medium text-canarias-700">
-                      Patrimonio total: {testamento.bienes.reduce((s, b) => s + b.valorEstimado, 0).toLocaleString('es-ES')} €
+                      Patrimonio total:{' '}
+                      {testamento.bienes
+                        .reduce((s, b) => s + b.valorEstimado, 0)
+                        .toLocaleString('es-ES')}{' '}
+                      €
                     </p>
                   </div>
                 </div>
@@ -306,12 +470,30 @@ export default function NuevoTestamentoPage() {
                     <FileSignature className="h-4 w-4 text-canarias-600" />
                     Disposiciones
                   </h4>
+
                   <div className="space-y-1 text-sm text-gray-600">
-                    <p><span className="font-medium">Albacea:</span> {testamento.disposiciones?.albacea || 'No designado'}</p>
-                    <p><span className="font-medium">Testamento vital:</span> {testamento.disposiciones?.testamentoVital ? 'Sí' : 'No'}</p>
-                    <p><span className="font-medium">Tutela menores:</span> {testamento.disposiciones?.tutelaMenores || 'No designada'}</p>
+                    <p>
+                      <span className="font-medium">Albacea:</span>{' '}
+                      {testamento.disposiciones?.albacea || 'No designado'}
+                    </p>
+
+                    <p>
+                      <span className="font-medium">Testamento vital:</span>{' '}
+                      {testamento.disposiciones?.testamentoVital ? 'Sí' : 'No'}
+                    </p>
+
+                    <p>
+                      <span className="font-medium">Tutela menores:</span>{' '}
+                      {testamento.disposiciones?.tutelaMenores ||
+                        'No designada'}
+                    </p>
+
                     {testamento.disposiciones?.legadoSolidario && (
-                      <p><span className="font-medium">Legado:</span> {testamento.disposiciones.legadoSolidario.ong} ({testamento.disposiciones.legadoSolidario.porcentaje}%)</p>
+                      <p>
+                        <span className="font-medium">Legado:</span>{' '}
+                        {testamento.disposiciones.legadoSolidario.ong} (
+                        {testamento.disposiciones.legadoSolidario.porcentaje}%)
+                      </p>
                     )}
                   </div>
                 </div>
@@ -319,17 +501,25 @@ export default function NuevoTestamentoPage() {
 
               {/* Acciones finales */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
-                <Button variant="outline" onClick={() => setCurrentStep(4)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentStep(4)}
+                >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Anterior
                 </Button>
+
                 <div className="flex gap-3">
-                  <Button variant="outline" onClick={handleReiniciar}>
+                  <Button
+                    variant="outline"
+                    onClick={handleReiniciar}
+                  >
                     <RotateCcw className="h-4 w-4 mr-2" />
                     Empezar de nuevo
                   </Button>
-                  <Button 
-                    onClick={handleFirmar} 
+
+                  <Button
+                    onClick={handleFirmar}
                     className="bg-green-600 hover:bg-green-700"
                     disabled={guardando}
                   >
@@ -342,14 +532,22 @@ export default function NuevoTestamentoPage() {
               {testamento.estado === 'firmado' && (
                 <div className="rounded-lg bg-green-50 border border-green-200 p-4 text-center">
                   <CheckCircle className="inline h-5 w-5 text-green-600 mr-2" />
+
                   <span className="text-green-800 font-medium">
-                    Testamento firmado digitalmente el {new Date().toLocaleDateString('es-ES')}
+                    Testamento firmado digitalmente el{' '}
+                    {new Date().toLocaleDateString('es-ES')}
                   </span>
+
                   <div className="mt-3 flex justify-center gap-3">
-                    <Button variant="outline" size="sm" onClick={handleDescargarPDF}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleDescargarPDF}
+                    >
                       <Download className="h-4 w-4 mr-1" />
                       Descargar PDF
                     </Button>
+
                     <Link href="/dashboard">
                       <Button variant="outline" size="sm">
                         Ir al panel
