@@ -223,7 +223,7 @@ export default function DashboardPage() {
                       PDF
                     </Button>
                     {t.estado === 'borrador' && (
-                      <Link href="/testamento/nuevo">
+                      <Link href={`/testamento/nuevo?id=${encodeURIComponent(t.id)}`}>
                         <Button size="sm" className="bg-canarias-600 hover:bg-canarias-700">
                           Continuar
                         </Button>
